@@ -138,8 +138,8 @@ class StudyMasterPlanerUI:
         self.priority_entry.delete(0, tk.END)
         self.priority_entry.insert(0, priority)
 
-        self.category_entry.delete(0, tk.END)
-        self.category_entry.insert(0, category)
+        self.selected_category.set(category)
+
 
 
     def show_calendar_view(self):
@@ -181,7 +181,6 @@ class StudyMasterPlanerUI:
             self.name_entry.delete(0, tk.END)
             self.deadline_entry.delete(0, tk.END)
             self.priority_entry.delete(0, tk.END)
-            self.category_entry.delete(0, tk.END)
 
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
         except Exception as e:
@@ -202,7 +201,8 @@ class StudyMasterPlanerUI:
             new_name = self.name_entry.get()
             new_deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
             new_priority = int(self.priority_entry.get())
-            new_category = self.category_entry.get()
+            new_category = self.selected_category.get()
+
 
             # Bearbeitung der Aufgabe
             if old_name == new_name:
