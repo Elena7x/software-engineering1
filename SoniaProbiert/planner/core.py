@@ -65,6 +65,10 @@ class StudyMasterPlaner:
             raise ValueError(f"Keine Aufgabe mit dem Namen '{name}' gefunden.")
         entry = self.entries[name]
         entry.change_value(field, new_value)
+        
+    def load_entries(self):
+        """Lädt alle Aufgaben aus der Datenbank."""
+        return self.database.get_all_entries()
 
     def set_reminder(self, name: str, time: datetime):
         """Setzt einen Reminder für eine Aufgabe."""
