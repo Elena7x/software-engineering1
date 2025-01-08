@@ -25,7 +25,6 @@ class Database:
         }
         self.save_data()
 
-
     def remove_entry(self, name: str):
         """Entfernt eine Aufgabe aus der Datenbank."""
         if name in self.entries:
@@ -42,8 +41,8 @@ class Database:
                 name=data["name"],
                 deadline=datetime.strptime(data["deadline"], "%Y-%m-%d"),
                 priority=data["priority"],
-                category=data["category"],  # Kategorie laden
-                text=data["text"]
+                category=data.get("category", "Allgemein"),  # Standardkategorie verwenden
+                text=data.get("text", "")
             ) for data in self.entries.values()
         ]
         
