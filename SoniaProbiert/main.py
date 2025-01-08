@@ -79,15 +79,13 @@ class StudyMasterPlanerUI:
         self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
 
         tk.Label(frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
-        self.priority_values = ["Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
+        self.priority_values = ["Sehr Niedrig", "Niedrig","Hoch", "Sehr Hoch"]
         self.selected_priority = tk.StringVar()
-        self.selected_priority.set(self.priority_values[1])  # Standardwert: "Niedrig"
         self.priority_menu = tk.OptionMenu(frame, self.selected_priority, *self.priority_values)
         self.priority_menu.grid(row=2, column=1, padx=5, pady=5)
 
         tk.Label(frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
         self.selected_category = tk.StringVar()
-        self.selected_category.set(self.categories[0])  # Standardkategorie
         self.category_menu = tk.OptionMenu(frame, self.selected_category, *self.categories)
         self.category_menu.grid(row=3, column=1, padx=5, pady=5)
 
