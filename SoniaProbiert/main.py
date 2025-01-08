@@ -61,7 +61,6 @@ class StudyMasterPlanerUI:
         view_menu.add_command(label="Kalenderansicht", command=self.show_calendar_view)
         view_menu.add_command(label="Listenansicht", command=self.hide_task_input)
 
-
     def create_task_input_section(self, parent_frame):
         frame = tk.Frame(parent_frame)
         frame.pack(pady=20, padx=10, fill="x")
@@ -109,6 +108,10 @@ class StudyMasterPlanerUI:
         self.delete_button.pack(side=tk.LEFT, padx=10)
         self.delete_button.pack_forget()  # Standardmäßig ausblenden
 
+        # Button: Abbrechen
+        self.cancel_button = tk.Button(button_frame, text="Abbrechen", command=self.cancel_selection, width=18, height=1)
+        self.cancel_button.pack(side=tk.LEFT, padx=10)
+        self.cancel_button.pack_forget()  # Standardmäßig ausblenden
 
     def create_task_view(self, parent_frame):
         self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
@@ -144,10 +147,11 @@ class StudyMasterPlanerUI:
         """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder und passt die Button-Sichtbarkeit an."""
         selected_item = self.tree.selection()
         if selected_item:
-            # Wenn eine Aufgabe ausgewählt ist, zeige Speichern- und Löschen-Button
+            # Wenn eine Aufgabe ausgewählt ist, zeige Speichern-, Löschen- und Abbrechen-Button
             self.add_button.pack_forget()
             self.save_button.pack(side=tk.LEFT, padx=10)
             self.delete_button.pack(side=tk.LEFT, padx=10)
+            self.cancel_button.pack(side=tk.LEFT, padx=10)
 
             # Hole die Werte aus der Treeview
             item = self.tree.item(selected_item[0], "values")
@@ -160,10 +164,11 @@ class StudyMasterPlanerUI:
             self.selected_priority.set(priority_text)
             self.selected_category.set(category)
         else:
-            # Wenn keine Aufgabe ausgewählt ist, zeige nur den "Aufgabe hinzufügen"-Button
+            # Wenn keine Aufgabe ausgewählt ist, zeige nur den "Aufgabe Hinzufügen"-Button
             self.add_button.pack(side=tk.LEFT, padx=10)
             self.save_button.pack_forget()
             self.delete_button.pack_forget()
+            self.cancel_button.pack_forget()
 
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
@@ -235,6 +240,20 @@ class StudyMasterPlanerUI:
         select_button = tk.Button(calendar_window, text="Datum auswählen", command=select_date)
         select_button.pack(pady=10)
         
+    def cancel_selection(self):
+        """Hebt die Auswahl in der Treeview auf und zeigt den 'Aufgabe Hinzufügen'-Modus."""
+        self.tree.selection_remove(self.tree.selection())  # Auswahl in der Treeview entfernen
+        self.name_entry.delete(0, tk.END)  # Eingabefelder leeren
+        self.deadline_label.config(text="Kein Datum ausgewählt")
+        self.selected_priority.set(self.priority_values[1])  # Priorität zurücksetzen
+        self.selected_category.set(self.categories[0])  # Kategorie zurücksetzen
+
+        # Buttons aktualisieren
+        self.add_button.pack(side=tk.LEFT, padx=10)
+        self.save_button.pack_forget()
+        self.delete_button.pack_forget()
+        self.cancel_button.pack_forget()
+
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
         try:
