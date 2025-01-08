@@ -10,7 +10,7 @@ class Database:
         self.file_path = file_path
         self.categories_path = categories_path
         self.entries = {}
-        self.categories = ["Kurs", "Persönliche Aufgaben"]
+        self.categories = ["DHBW", "Persönliche Aufgaben"]
         self.load_data()
         self.load_categories()
 
@@ -78,7 +78,7 @@ class Database:
             self.save_categories()
         except json.JSONDecodeError:
             print("Fehler beim Laden der Kategorien. Datei ist beschädigt.")
-            self.categories = ["Kurs", "Persönliche Aufgaben"]
+            self.categories = ["DHBW", "Persönliche Aufgaben"]
             
     def save_categories(self):
         """Speichert die Kategorien in einer JSON-Datei."""

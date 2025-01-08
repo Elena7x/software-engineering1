@@ -11,7 +11,7 @@ from planner.core import StudyMasterPlaner
 class StudyMasterPlanerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Study Master Planer")
+        self.root.title("Study Master")
         self.planner = StudyMasterPlaner()
 
         # Kategorien laden
@@ -83,6 +83,9 @@ class StudyMasterPlanerUI:
         add_category_button = tk.Button(button_frame, text="Kategorie hinzufügen", command=self.add_category, width=18, height=1)
         add_category_button.pack(side=tk.LEFT, padx=10)
 
+        # Button zum Löschen einer Kategorie
+        delete_category_button = tk.Button(button_frame, text="Kategorie löschen", command=self.delete_category, width=18, height=1)
+        delete_category_button.pack(side=tk.LEFT, padx=10)
 
     def create_task_view(self):
         """Erstellt die Treeview zur Anzeige der Aufgaben."""
@@ -163,6 +166,30 @@ class StudyMasterPlanerUI:
             else:
                 messagebox.showerror("Fehler", f"Die Kategorie '{new_category}' existiert bereits.")
 
+    def delete_category(self):
+            """Löscht eine ausgewählte Kategorie."""
+            selected_category = tk.simpledialog.askstring("Kategorie löschen", "Gib den Namen der Kategorie ein, die gelöscht werden soll:")
+            
+            if selected_category:
+                if selected_category in self.categories:
+                    if selected_category not in ["DHBW", "Persönliche Aufgaben"]:  # Standardkategorien schützen
+                        self.categories.remove(selected_category)
+                        self.planner.database.categories = self.categories
+                        self.planner.database.save_categories()
+                        self.refresh_category_menu()
+                        messagebox.showinfo("Erfolg", f"Die Kategorie '{selected_category}' wurde gelöscht!")
+                    else:
+                        messagebox.showerror("Fehler", f"Die Kategorie '{selected_category}' kann nicht gelöscht werden.")
+                else:
+                    messagebox.showerror("Fehler", f"Die Kategorie '{selected_category}' existiert nicht.")
+    
+    def refresh_category_menu(self):
+        """Aktualisiert das Dropdown-Menü für Kategorien."""
+        self.category_menu['menu'].delete(0, 'end')  # Entferne alle existierenden Kategorien
+        for category in self.categories:
+            self.category_menu['menu'].add_command(label=category, command=tk._setit(self.selected_category, category))
+        self.selected_category.set(self.categories[0])  # Setze die Standardkategorie
+        
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
         try:
