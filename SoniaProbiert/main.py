@@ -109,10 +109,13 @@ class StudyMasterPlanerUI:
         self.delete_button.pack(side=tk.LEFT, padx=10)
         self.delete_button.pack_forget()  # Standardmäßig ausblenden
 
-        # Button: Abbrechen
-        self.cancel_button = tk.Button(button_frame, text="Abbrechen", command=self.cancel_selection, width=18, height=1)
-        self.cancel_button.pack(side=tk.LEFT, padx=10)
-        self.cancel_button.pack_forget()  # Standardmäßig ausblenden
+        # Kategorie hinzufügen
+        self.add_category_button = tk.Button(button_frame, text="Kategorie hinzufügen", command=self.add_category, width=18, height=1)
+        self.add_category_button.pack(side=tk.LEFT, padx=10)
+
+        # Kategorie löschen
+        self.delete_category_button = tk.Button(button_frame, text="Kategorie löschen", command=self.delete_category, width=18, height=1)
+        self.delete_category_button.pack(side=tk.LEFT, padx=10)
 
     def create_task_view(self, parent_frame):
         self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
@@ -187,7 +190,6 @@ class StudyMasterPlanerUI:
         """Blendet den Bereich 'Aufgaben Hinzufügen' aus."""
         self.task_input_frame.pack_forget()  # Versteckt den Bereich zum Hinzufügen von Aufgaben
 
-        
     def add_category(self):
         """Fügt eine neue Kategorie hinzu."""
         new_category = tk.simpledialog.askstring("Neue Kategorie", "Gib den Namen der neuen Kategorie ein:")
@@ -202,22 +204,21 @@ class StudyMasterPlanerUI:
                 messagebox.showerror("Fehler", f"Die Kategorie '{new_category}' existiert bereits.")
 
     def delete_category(self):
-            """Löscht eine ausgewählte Kategorie."""
-            selected_category = tk.simpledialog.askstring("Kategorie löschen", "Gib den Namen der Kategorie ein, die gelöscht werden soll:")
-            
-            if selected_category:
-                if selected_category in self.categories:
-                    if selected_category not in ["DHBW", "Persönliche Aufgaben"]:  # Standardkategorien schützen
-                        self.categories.remove(selected_category)
-                        self.planner.database.categories = self.categories
-                        self.planner.database.save_categories()
-                        self.refresh_category_menu()
-                        messagebox.showinfo("Erfolg", f"Die Kategorie '{selected_category}' wurde gelöscht!")
-                    else:
-                        messagebox.showerror("Fehler", f"Die Kategorie '{selected_category}' kann nicht gelöscht werden.")
+        """Löscht eine ausgewählte Kategorie."""
+        selected_category = tk.simpledialog.askstring("Kategorie löschen", "Gib den Namen der Kategorie ein, die gelöscht werden soll:")
+        if selected_category:
+            if selected_category in self.categories:
+                if selected_category not in ["DHBW", "Persönliche Aufgaben"]:  # Standardkategorien schützen
+                    self.categories.remove(selected_category)
+                    self.planner.database.categories = self.categories
+                    self.planner.database.save_categories()
+                    self.refresh_category_menu()
+                    messagebox.showinfo("Erfolg", f"Die Kategorie '{selected_category}' wurde gelöscht!")
                 else:
-                    messagebox.showerror("Fehler", f"Die Kategorie '{selected_category}' existiert nicht.")
-    
+                    messagebox.showerror("Fehler", f"Die Kategorie '{selected_category}' kann nicht gelöscht werden.")
+            else:
+                messagebox.showerror("Fehler", f"Die Kategorie '{selected_category}' existiert nicht.")
+
     def refresh_category_menu(self):
         """Aktualisiert das Dropdown-Menü für Kategorien."""
         self.category_menu['menu'].delete(0, 'end')  # Entferne alle existierenden Kategorien
