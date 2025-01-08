@@ -23,6 +23,14 @@ class StudyMasterPlanerUI:
 
         # Zeige gespeicherte Aufgaben an
         self.refresh_task_view()
+        
+        self.priority_display_mapping = {
+            1: "Sehr Niedrig",
+            2: "Niedrig",
+            3: "Hoch",
+            4: "Sehr Hoch"
+        }
+        self.priority_reverse_mapping = {v: k for k, v in self.priority_display_mapping.items()}
 
     def create_menu(self):
         menu = tk.Menu(self.root)
@@ -118,9 +126,10 @@ class StudyMasterPlanerUI:
             self.tree.delete(item)
 
         for task in tasks:
+            priority_text = self.priority_display_mapping.get(task.priority, "Unbekannt")
             self.tree.insert(
                 "", "end",
-                values=(task.name, task.deadline.strftime("%Y-%m-%d"), task.priority, task.category)
+                values=(task.name, task.deadline.strftime("%Y-%m-%d"), priority_text, task.category)
             )
 
     def on_treeview_select(self, event):
@@ -140,8 +149,7 @@ class StudyMasterPlanerUI:
         self.deadline_entry.delete(0, tk.END)
         self.deadline_entry.insert(0, deadline)
 
-        self.priority_entry.delete(0, tk.END)
-        self.priority_entry.insert(0, priority)
+        self.selected_priority.set(priority_text)
 
         self.selected_category.set(category)
 
@@ -199,13 +207,7 @@ class StudyMasterPlanerUI:
             name = self.name_entry.get()
             deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
             priority_text = self.selected_priority.get()
-            priority_mapping = {
-                "Sehr Niedrig": 1,
-                "Niedrig": 2,
-                "Hoch": 3,
-                "Sehr Hoch": 4
-            }
-            priority = priority_mapping[priority_text]
+            priority = self.priority_reverse_mapping[priority_text]
             category = self.selected_category.get()
 
             # Aufgabe erstellen
