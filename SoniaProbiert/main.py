@@ -13,6 +13,7 @@ class StudyMasterPlanerUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Study Master Planer")
+        self.root.geometry("900x600")  # Fenstergröße setzen
         self.planner = StudyMasterPlaner()
 
         # Kategorien laden
