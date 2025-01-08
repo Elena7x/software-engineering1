@@ -59,34 +59,66 @@ class StudyMasterPlanerUI:
         add_button.grid(row=4, column=0, columnspan=2, pady=10)
 
     def create_task_view(self):
-        # Aufgabenansicht (z. B. Treeview für Tabellenansicht)
-        self.tree = Treeview(self.root, columns=("Deadline", "Priorität", "Tag"), show="headings")
+        """Erstellt die Treeview zur Anzeige der Aufgaben."""
+        # Treeview konfigurieren
+        self.tree = Treeview(self.root, columns=("Name", "Deadline", "Priorität", "Tag"), show="headings")
+        self.tree.heading("Name", text="Name")
         self.tree.heading("Deadline", text="Deadline")
         self.tree.heading("Priorität", text="Priorität")
         self.tree.heading("Tag", text="Tag")
+
+        # Spaltenbreite anpassen (optional)
+        self.tree.column("Name", width=200)
+        self.tree.column("Deadline", width=100)
+        self.tree.column("Priorität", width=80)
+        self.tree.column("Tag", width=100)
+
+        # Treeview packen
         self.tree.pack(pady=10, fill="both", expand=True)
 
     def add_task(self):
+        """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
         try:
+            # Eingaben aus den Feldern lesen
             name = self.name_entry.get()
             deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
             priority = int(self.priority_entry.get())
             tag = self.tag_entry.get()
 
-            # Neue Aufgabe erstellen
+            # Aufgabe erstellen
             self.planner.create_entry(name, deadline, priority, tag)
+
+            # Treeview aktualisieren
             self.refresh_task_view()
-            messagebox.showinfo("Erfolg", "Aufgabe hinzugefügt!")
+
+            # Erfolgsmeldung anzeigen
+            messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
+
+            # Eingabefelder leeren
+            self.name_entry.delete(0, tk.END)
+            self.deadline_entry.delete(0, tk.END)
+            self.priority_entry.delete(0, tk.END)
+            self.tag_entry.delete(0, tk.END)
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
 
     def refresh_task_view(self):
-        # Aktuelle Aufgaben in der Treeview anzeigen
-        for i in self.tree.get_children():
-            self.tree.delete(i)
+        """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
+        # Zuerst alle vorhandenen Einträge in der Treeview löschen
+        for item in self.tree.get_children():
+            self.tree.delete(item)
 
+        # Aufgaben aus dem Planer laden und in die Treeview einfügen
         for task in self.planner.load_entries():
-            self.tree.insert("", "end", values=(task.deadline.strftime("%Y-%m-%d"), task.priority, task.tag))
+            self.tree.insert(
+                "", "end", 
+                values=(
+                    task.name, 
+                    task.deadline.strftime("%Y-%m-%d"), 
+                    task.priority, 
+                    task.tag
+                )
+            )
 
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
@@ -96,6 +128,25 @@ class StudyMasterPlanerUI:
         # Dummy-Methode für Listenansicht (aktuell aktualisiert sie nur die Ansicht)
         self.refresh_task_view()
 
+    def delete_task(self):
+        """Löscht die ausgewählte Aufgabe und aktualisiert die Anzeige."""
+        try:
+            # Ausgewählte Aufgabe in der Treeview abrufen
+            selected_item = self.tree.selection()[0]  # ID der ausgewählten Zeile
+            task_name = self.tree.item(selected_item, "values")[0]  # Name der Aufgabe
+
+            # Aufgabe aus dem Planer löschen
+            self.planner.delete_entry(task_name)
+
+            # Treeview aktualisieren
+            self.refresh_task_view()
+
+            # Erfolgsmeldung anzeigen
+            messagebox.showinfo("Erfolg", f"Aufgabe '{task_name}' wurde gelöscht!")
+        except IndexError:
+            messagebox.showerror("Fehler", "Bitte eine Aufgabe auswählen!")
+        except Exception as e:
+            messagebox.showerror("Fehler", str(e))
 
 # Hauptprogramm starten
 if __name__ == "__main__":

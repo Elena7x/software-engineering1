@@ -112,3 +112,37 @@ class StudyMasterPlaner:
     def filter_list_view(self, priority=None, tag=None):
         entries = self.database.get_all_entries()
         self.list_view.show_only_selected(entries, priority, tag)
+
+if __name__ == "__main__":
+    planner = StudyMasterPlaner()
+    
+    # Aufgaben erstellen
+    planner.create_entry("Aufgabe 1", datetime(2025, 1, 10), priority=2, tag="Wichtig", text="Lernen für Prüfung")
+    planner.create_entry("Aufgabe 2", datetime(2025, 1, 15), priority=1, tag="Normal", text="Hausaufgaben")
+    
+    # Kalenderansicht anzeigen
+    print("\n--- Kalenderansicht ---")
+    planner.show_calendar_view()
+
+    # Listenansicht anzeigen
+    print("\n--- Listenansicht ---")
+    planner.show_list_view()
+
+    # Gefilterte Kalenderansicht
+    print("\n--- Gefilterte Kalenderansicht (Priority: 2) ---")
+    planner.filter_calendar_view(priority=2)
+
+    # Aufgabe bearbeiten
+    print("\n--- Aufgabe bearbeiten ---")
+    planner.edit_entry("Aufgabe 1", "priority", 1)
+    planner.show_list_view()
+
+    # Reminder hinzufügen
+    print("\n--- Reminder hinzufügen ---")
+    planner.database.entries["Aufgabe 1"].set_reminder(datetime(2025, 1, 9))
+    print(f"Reminder gesetzt: {planner.database.entries['Aufgabe 1'].reminder.time}")
+
+    # Aufgabe löschen
+    print("\n--- Aufgabe löschen ---")
+    planner.delete_entry("Aufgabe 2")
+    planner.show_list_view()
