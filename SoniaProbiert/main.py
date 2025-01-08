@@ -35,12 +35,16 @@ class StudyMasterPlanerUI:
         self.create_task_view(self.task_view_frame)
         self.create_task_input_section(self.task_input_frame)
 
-        # Standardansicht: Nur die Liste anzeigen
+        # Standardansicht: Aufgabenliste anzeigen, Eingabemaske ausblenden
         self.task_view_frame.pack(fill="both", expand=True)
         self.task_input_frame.pack_forget()
 
+        # Aufgabenliste aktualisieren
+        self.refresh_task_view()
+
         # Menü erstellen
         self.create_menu()
+
 
 
     def create_menu(self):
