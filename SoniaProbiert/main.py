@@ -53,10 +53,12 @@ class StudyMasterPlanerUI:
         self.deadline_entry.grid(row=1, column=1, padx=5, pady=5)
 
         tk.Label(frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
-        self.priority_entry = tk.Entry(frame)
-        self.priority_entry.grid(row=2, column=1, padx=5, pady=5)
+        self.priority_values = ["Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
+        self.selected_priority = tk.StringVar()
+        self.selected_priority.set(self.priority_values[1])  # Standardwert: "Niedrig"
+        self.priority_menu = tk.OptionMenu(frame, self.selected_priority, *self.priority_values)
+        self.priority_menu.grid(row=2, column=1, padx=5, pady=5)
 
-        # Dropdown-Menü für Kategorien
         tk.Label(frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
         self.selected_category = tk.StringVar()
         self.selected_category.set(self.categories[0])  # Standardkategorie
@@ -196,7 +198,14 @@ class StudyMasterPlanerUI:
             # Eingaben aus den Feldern lesen
             name = self.name_entry.get()
             deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
-            priority = int(self.priority_entry.get())
+            priority_text = self.selected_priority.get()
+            priority_mapping = {
+                "Sehr Niedrig": 1,
+                "Niedrig": 2,
+                "Hoch": 3,
+                "Sehr Hoch": 4
+            }
+            priority = priority_mapping[priority_text]
             category = self.selected_category.get()
 
             # Aufgabe erstellen
@@ -208,11 +217,11 @@ class StudyMasterPlanerUI:
             # Eingabefelder leeren
             self.name_entry.delete(0, tk.END)
             self.deadline_entry.delete(0, tk.END)
-            self.priority_entry.delete(0, tk.END)
 
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
+
             
     def update_task(self):
         """Speichert die geänderten Daten der ausgewählten Aufgabe."""
@@ -228,18 +237,22 @@ class StudyMasterPlanerUI:
             # Werte aus den Eingabefeldern lesen
             new_name = self.name_entry.get()
             new_deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
-            new_priority = int(self.priority_entry.get())
+            priority_text = self.selected_priority.get()
+            priority_mapping = {
+                "Sehr Niedrig": 1,
+                "Niedrig": 2,
+                "Hoch": 3,
+                "Sehr Hoch": 4
+            }
+            new_priority = priority_mapping[priority_text]
             new_category = self.selected_category.get()
-
 
             # Bearbeitung der Aufgabe
             if old_name == new_name:
-                # Wenn der Name nicht geändert wurde, nur die Felder aktualisieren
                 self.planner.edit_entry(new_name, "deadline", new_deadline)
                 self.planner.edit_entry(new_name, "priority", new_priority)
                 self.planner.edit_entry(new_name, "category", new_category)
             else:
-                # Wenn der Name geändert wurde, alte Aufgabe löschen und neue erstellen
                 self.planner.delete_entry(old_name)
                 self.planner.create_entry(new_name, new_deadline, new_priority, new_category)
 
@@ -248,6 +261,7 @@ class StudyMasterPlanerUI:
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich aktualisiert!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
+
             
     def delete_task(self):
         """Löscht die ausgewählte Aufgabe."""
