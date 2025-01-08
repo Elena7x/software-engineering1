@@ -17,6 +17,8 @@ class StudyMasterPlanerUI:
         self.create_menu()
         self.create_task_input_section()
         self.create_task_view()
+        
+        self.refresh_task_view()
 
     def create_menu(self):
         menu = tk.Menu(self.root)

@@ -56,6 +56,7 @@ class Database:
         try:
             with open(self.file_path, "r") as file:
                 self.entries = json.load(file)
+            print("Daten aus der Datei geladen:", self.entries) 
         except FileNotFoundError:
             self.entries = {}
         except json.JSONDecodeError:
