@@ -32,7 +32,7 @@ class Database:
             self.save_data()
         else:
             raise ValueError(f"Aufgabe mit dem Namen '{name}' existiert nicht.")
-        
+
     def get_all_entries(self):
         from planner.models import Aufgabe  # Lokaler Import
         tasks = [

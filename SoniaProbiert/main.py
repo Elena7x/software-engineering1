@@ -59,6 +59,10 @@ class StudyMasterPlanerUI:
         # Button zum Hinzufügen von Aufgaben
         add_button = tk.Button(frame, text="Aufgabe hinzufügen", command=self.add_task)
         add_button.grid(row=4, column=0, columnspan=2, pady=10)
+        
+        # Button zum Speichern der Änderungen
+        save_button = tk.Button(frame, text="Änderungen speichern", command=self.update_task)
+        save_button.grid(row=5, column=0, columnspan=2, pady=10)
 
     def create_task_view(self):
         """Erstellt die Treeview zur Anzeige der Aufgaben."""
@@ -77,6 +81,9 @@ class StudyMasterPlanerUI:
 
         # Treeview packen
         self.tree.pack(pady=10, fill="both", expand=True)
+        
+        # Bind Treeview-Auswahl an Methode
+        self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
 
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
@@ -102,6 +109,35 @@ class StudyMasterPlanerUI:
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
+            
+    def update_task(self):
+        """Speichert die geänderten Daten der ausgewählten Aufgabe."""
+        try:
+            # Hole den ausgewählten Aufgaben-Namen
+            selected_item = self.tree.selection()
+            if not selected_item:
+                messagebox.showerror("Fehler", "Bitte eine Aufgabe auswählen!")
+                return
+
+            old_name = self.tree.item(selected_item[0], "values")[0]  # Name der Aufgabe vor Änderung
+
+            # Werte aus den Eingabefeldern lesen
+            new_name = self.name_entry.get()
+            new_deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
+            new_priority = int(self.priority_entry.get())
+            new_tag = self.tag_entry.get()
+
+            # Aufgabe bearbeiten
+            if old_name != new_name:
+                self.planner.delete_entry(old_name)  # Alte Aufgabe entfernen, falls Name geändert
+            self.planner.create_entry(new_name, new_deadline, new_priority, new_tag)
+
+            # Treeview aktualisieren
+            self.refresh_task_view()
+            messagebox.showinfo("Erfolg", "Aufgabe erfolgreich aktualisiert!")
+        except Exception as e:
+            messagebox.showerror("Fehler", str(e))
+
 
 
     def refresh_task_view(self):
@@ -122,6 +158,30 @@ class StudyMasterPlanerUI:
                     task.tag
                 )
             )
+
+    def on_treeview_select(self, event):
+        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder."""
+        selected_item = self.tree.selection()
+        if not selected_item:
+            return
+
+        # Hole die Werte aus der Treeview
+        item = self.tree.item(selected_item[0], "values")
+        name, deadline, priority, tag = item
+
+        # Werte in die Eingabefelder einfügen
+        self.name_entry.delete(0, tk.END)
+        self.name_entry.insert(0, name)
+
+        self.deadline_entry.delete(0, tk.END)
+        self.deadline_entry.insert(0, deadline)
+
+        self.priority_entry.delete(0, tk.END)
+        self.priority_entry.insert(0, priority)
+
+        self.tag_entry.delete(0, tk.END)
+        self.tag_entry.insert(0, tag)
+
 
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)

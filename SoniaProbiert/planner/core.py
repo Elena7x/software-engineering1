@@ -49,19 +49,15 @@ class StudyMasterPlaner:
         self.entries = {}
         
     def create_entry(self, name: str, deadline: datetime, priority: int = 1, tag: str = "", text: str = ""):
-        if name in self.entries:
+        if self.database.check_name_exists(name):
             raise ValueError(f"Eine Aufgabe mit dem Namen '{name}' existiert bereits.")
         new_task = Aufgabe(name, deadline, priority, tag, text)
-        self.entries[name] = new_task
-        self.database.save_entry(new_task)  # Speichern in die Datenbank
+        self.database.save_entry(new_task)
 
     def delete_entry(self, name: str):
         """Löscht eine Aufgabe nach ihrem Namen."""
-        if name in self.entries:
-            del self.entries[name]
-        else:
-            raise ValueError(f"Keine Aufgabe mit dem Namen '{name}' gefunden.")
-
+        self.database.remove_entry(name)
+    
     def edit_entry(self, name: str, field: str, new_value):
         """Bearbeitet ein Feld einer existierenden Aufgabe."""
         if name not in self.entries:
