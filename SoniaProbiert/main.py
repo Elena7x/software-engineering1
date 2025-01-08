@@ -88,28 +88,29 @@ class StudyMasterPlanerUI:
             # Aufgabe erstellen
             self.planner.create_entry(name, deadline, priority, tag)
 
-            # Treeview aktualisieren
+            # Aktualisiere die Treeview
             self.refresh_task_view()
-
-            # Erfolgsmeldung anzeigen
-            messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
 
             # Eingabefelder leeren
             self.name_entry.delete(0, tk.END)
             self.deadline_entry.delete(0, tk.END)
             self.priority_entry.delete(0, tk.END)
             self.tag_entry.delete(0, tk.END)
+
+            messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
 
+
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
-        # Zuerst alle vorhandenen Einträge in der Treeview löschen
+        # Lösche alle vorhandenen Einträge in der Treeview
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-        # Aufgaben aus dem Planer laden und in die Treeview einfügen
+        # Lade die Aufgaben aus dem Planer
         for task in self.planner.load_entries():
+            # Füge jede Aufgabe als Zeile in die Treeview ein
             self.tree.insert(
                 "", "end", 
                 values=(
