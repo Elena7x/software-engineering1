@@ -7,11 +7,9 @@ from planner.models import Aufgabe
 
 class Database:
     def __init__(self, file_path="tasks.json"):
-        """Initialisiert die Datenbank mit einer JSON-Datei."""
         self.file_path = file_path
         self.entries = {}
-
-        # Daten beim Start laden
+        print(f"JSON-Datei wird verwendet: {self.file_path}")  # Debugging
         self.load_data()
 
     def save_entry(self, entry: Aufgabe):
@@ -36,9 +34,8 @@ class Database:
             raise ValueError(f"Aufgabe mit dem Namen '{name}' existiert nicht.")
         
     def get_all_entries(self):
-        """Gibt alle Aufgaben als Liste von `Aufgabe`-Objekten zurück."""
-        from planner.core import Aufgabe  # Lokaler Import
-        return [
+        from planner.models import Aufgabe  # Lokaler Import
+        tasks = [
             Aufgabe(
                 name=data["name"],
                 deadline=datetime.strptime(data["deadline"], "%Y-%m-%d"),
@@ -47,6 +44,8 @@ class Database:
                 text=data["text"]
             ) for data in self.entries.values()
         ]
+        print("Geladene Aufgaben aus der Datenbank:", tasks)  # Debugging
+        return tasks
 
     def check_name_exists(self, name: str) -> bool:
         """Prüft, ob eine Aufgabe mit dem Namen existiert."""

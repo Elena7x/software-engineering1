@@ -45,15 +45,14 @@ class Reminder:
 class StudyMasterPlaner:
     def __init__(self):
         """Initialisiert den Planer mit einer leeren Liste von Aufgaben."""
-        self.entries = {}
-        self.database = Database()  # Initialisierung der Datenbank
+        self.database = Database(file_path="data/tasks.json")  # Initialisierung der Datenbank
 
     def create_entry(self, name: str, deadline: datetime, priority: int = 1, tag: str = "", text: str = ""):
-        """Erstellt eine neue Aufgabe."""
         if name in self.entries:
             raise ValueError(f"Eine Aufgabe mit dem Namen '{name}' existiert bereits.")
         new_task = Aufgabe(name, deadline, priority, tag, text)
         self.entries[name] = new_task
+        self.database.save_entry(new_task)  # Speichern in die Datenbank
 
     def delete_entry(self, name: str):
         """Löscht eine Aufgabe nach ihrem Namen."""
