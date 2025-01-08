@@ -15,6 +15,9 @@ class StudyMasterPlanerUI:
         self.root.title("Study Master Planer")
         self.planner = StudyMasterPlaner()
 
+        # Kategorien laden
+        self.categories = self.planner.database.categories
+
         # Mapping für Prioritäten (numerisch zu textuell)
         self.priority_display_mapping = {
             1: "Sehr Niedrig",
@@ -22,43 +25,43 @@ class StudyMasterPlanerUI:
             3: "Hoch",
             4: "Sehr Hoch"
         }
-        self.priority_reverse_mapping = {v: k for k, v in self.priority_display_mapping.items()}  # Text zu numerisch
+        self.priority_reverse_mapping = {v: k for k, v in self.priority_display_mapping.items()}
 
-        # Kategorien laden
-        self.categories = self.planner.database.categories
+        # Frames erstellen
+        self.task_input_frame = tk.Frame(self.root)  # Frame für "Aufgaben Hinzufügen"
+        self.task_view_frame = tk.Frame(self.root)  # Frame für die Aufgabenliste
 
+        # Standardansicht: Aufgabenliste anzeigen
+        self.create_task_view(self.task_view_frame)
+        self.create_task_input_section(self.task_input_frame)
+        self.task_view_frame.pack(fill="both", expand=True)
+
+        # Menü erstellen
         self.create_menu()
-        self.create_task_input_section()
-        self.create_task_view()
-
-        # Zeige gespeicherte Aufgaben an
-        self.refresh_task_view()
 
     def create_menu(self):
         menu = tk.Menu(self.root)
         self.root.config(menu=menu)
 
-        # Datei-Menü
-        #file_menu = tk.Menu(menu, tearoff=0)
-        #menu.add_cascade(label="Datei", menu=file_menu)
-        #file_menu.add_command(label="Beenden", command=self.root.quit)
-
+        # Ansicht-Menü
+        view_menu = tk.Menu(menu, tearoff=0)
+        menu.add_command(label="Aufgaben Hinzufügen", command=self.show_task_input)
+        
         # Ansicht-Menü
         view_menu = tk.Menu(menu, tearoff=0)
         menu.add_cascade(label="Ansicht", menu=view_menu)
         view_menu.add_command(label="Kalenderansicht", command=self.show_calendar_view)
-        view_menu.add_command(label="Listenansicht", command=self.show_list_view)
+        view_menu.add_command(label="Listenansicht", command=self.show_task_view)
 
-    def create_task_input_section(self):
-        frame = tk.Frame(self.root)
-        frame.pack(pady=20, padx=10, fill="x")  # Mehr Abstand um den gesamten Bereich
+    def create_task_input_section(self, parent_frame):
+        frame = tk.Frame(parent_frame)
+        frame.pack(pady=20, padx=10, fill="x")
 
         # Eingabefelder für neue Aufgaben
         tk.Label(frame, text="Name:").grid(row=0, column=0, padx=5, pady=5)
         self.name_entry = tk.Entry(frame)
         self.name_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        # Button und Label für Deadline
         tk.Label(frame, text="Deadline:").grid(row=1, column=0, padx=5, pady=5)
         self.deadline_label = tk.Label(frame, text="Kein Datum ausgewählt", bg="white", relief="sunken", width=20)
         self.deadline_label.grid(row=1, column=1, padx=5, pady=5)
@@ -66,7 +69,6 @@ class StudyMasterPlanerUI:
         self.deadline_button = tk.Button(frame, text="Datum auswählen", command=self.open_calendar_popup)
         self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
 
-        #Priorität
         tk.Label(frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
         self.priority_values = ["Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
         self.selected_priority = tk.StringVar()
@@ -74,7 +76,6 @@ class StudyMasterPlanerUI:
         self.priority_menu = tk.OptionMenu(frame, self.selected_priority, *self.priority_values)
         self.priority_menu.grid(row=2, column=1, padx=5, pady=5)
 
-        #Kategorie
         tk.Label(frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
         self.selected_category = tk.StringVar()
         self.selected_category.set(self.categories[0])  # Standardkategorie
@@ -82,48 +83,35 @@ class StudyMasterPlanerUI:
         self.category_menu.grid(row=3, column=1, padx=5, pady=5)
 
         # Buttons
-        button_frame = tk.Frame(frame)  # Extra Frame für die Buttons
+        button_frame = tk.Frame(frame)
         button_frame.grid(row=4, column=0, columnspan=2, pady=10)
 
-        # Button zum Hinzufügen von Aufgaben
         add_button = tk.Button(button_frame, text="Aufgabe hinzufügen", command=self.add_task, width=18, height=1)
         add_button.pack(side=tk.LEFT, padx=10)
 
-        # Button zum Speichern der Änderungen
         save_button = tk.Button(button_frame, text="Änderungen speichern", command=self.update_task, width=18, height=1)
         save_button.pack(side=tk.LEFT, padx=10)
 
-        # Button zum Löschen der ausgewählten Aufgabe
         delete_button = tk.Button(button_frame, text="Aufgabe löschen", command=self.delete_task, width=18, height=1)
         delete_button.pack(side=tk.LEFT, padx=10)
 
-        # Button zum Hinzufügen neuer Kategorien
         add_category_button = tk.Button(button_frame, text="Kategorie hinzufügen", command=self.add_category, width=18, height=1)
         add_category_button.pack(side=tk.LEFT, padx=10)
 
-        # Button zum Löschen einer Kategorie
-        delete_category_button = tk.Button(button_frame, text="Kategorie löschen", command=self.delete_category, width=18, height=1)
-        delete_category_button.pack(side=tk.LEFT, padx=10)
-
-    def create_task_view(self):
+    def create_task_view(self, parent_frame):
         """Erstellt die Treeview zur Anzeige der Aufgaben."""
-        # Treeview konfigurieren
-        self.tree = Treeview(self.root, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
+        self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
         self.tree.heading("Name", text="Name")
         self.tree.heading("Deadline", text="Deadline")
         self.tree.heading("Priorität", text="Priorität")
         self.tree.heading("category", text="category")
 
-        # Spaltenbreite anpassen (optional)
         self.tree.column("Name", width=200)
         self.tree.column("Deadline", width=100)
         self.tree.column("Priorität", width=80)
         self.tree.column("category", width=100)
 
-        # Treeview packen
         self.tree.pack(pady=10, fill="both", expand=True)
-        
-        # Bind Treeview-Auswahl an Methode
         self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
 
     def refresh_task_view(self):
@@ -170,6 +158,17 @@ class StudyMasterPlanerUI:
     def show_list_view(self):
         # Dummy-Methode für Listenansicht (aktuell aktualisiert sie nur die Ansicht)
         self.refresh_task_view()
+        
+    def show_task_input(self):
+        """Zeigt den Bereich 'Aufgaben Hinzufügen' an."""
+        self.task_view_frame.pack_forget()  # Versteckt die Aufgabenliste
+        self.task_input_frame.pack(fill="both", expand=True)  # Zeigt den Bereich zum Hinzufügen von Aufgaben an
+
+    def show_task_view(self):
+        """Zeigt die Aufgabenliste an."""
+        self.task_input_frame.pack_forget()  # Versteckt den Bereich zum Hinzufügen von Aufgaben
+        self.task_view_frame.pack(fill="both", expand=True)  # Zeigt die Aufgabenliste an
+
         
     def add_category(self):
         """Fügt eine neue Kategorie hinzu."""
