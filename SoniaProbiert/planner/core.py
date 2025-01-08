@@ -48,10 +48,10 @@ class StudyMasterPlaner:
         self.database = Database()  # Initialisierung der Datenbank
         self.entries = {}
         
-    def create_entry(self, name: str, deadline: datetime, priority: int = 1, tag: str = "", text: str = ""):
+    def create_entry(self, name: str, deadline: datetime, priority: int = 1, category: str = "Allgemein", text: str = ""):
         if self.database.check_name_exists(name):
             raise ValueError(f"Eine Aufgabe mit dem Namen '{name}' existiert bereits.")
-        new_task = Aufgabe(name, deadline, priority, tag, text)
+        new_task = Aufgabe(name, deadline, priority, category, text)
         self.database.save_entry(new_task)
 
     def delete_entry(self, name: str):

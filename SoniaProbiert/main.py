@@ -19,6 +19,8 @@ class StudyMasterPlanerUI:
         self.create_task_view()
         
         self.refresh_task_view()
+        
+        self.categories = ["Kurs", "Persönliche Aufgaben"]  # Standardkategorien
 
     def create_menu(self):
         menu = tk.Menu(self.root)
@@ -67,6 +69,20 @@ class StudyMasterPlanerUI:
         # Button zum Löschen der ausgewählten Aufgabe
         delete_button = tk.Button(frame, text="Aufgabe löschen", command=self.delete_task)
         delete_button.grid(row=6, column=0, columnspan=2, pady=10)
+        
+        # Dropdown-Menü für Kategorien
+        tk.Label(frame, text="Kategorie:").grid(row=4, column=0, padx=5, pady=5)
+
+        self.selected_category = tk.StringVar()
+        self.selected_category.set(self.categories[0])  # Standardkategorie
+
+        self.category_menu = tk.OptionMenu(frame, self.selected_category, *self.categories)
+        self.category_menu.grid(row=4, column=1, padx=5, pady=5)
+
+        # Button zum Hinzufügen neuer Kategorien
+        add_category_button = tk.Button(frame, text="Kategorie hinzufügen", command=self.add_category)
+        add_category_button.grid(row=5, column=0, columnspan=2, pady=10)
+
 
     def create_task_view(self):
         """Erstellt die Treeview zur Anzeige der Aufgaben."""
@@ -91,18 +107,15 @@ class StudyMasterPlanerUI:
 
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
-        # Lade die aktuellen Aufgaben aus der Datenbank
         tasks = self.planner.load_entries()
 
-        # Lösche alle Einträge aus der Treeview
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-        # Füge die Aufgaben erneut in die Treeview ein
         for task in tasks:
             self.tree.insert(
                 "", "end",
-                values=(task.name, task.deadline.strftime("%Y-%m-%d"), task.priority, task.tag)
+                values=(task.name, task.deadline.strftime("%Y-%m-%d"), task.priority, task.category)
             )
 
     def on_treeview_select(self, event):
@@ -136,6 +149,18 @@ class StudyMasterPlanerUI:
     def show_list_view(self):
         # Dummy-Methode für Listenansicht (aktuell aktualisiert sie nur die Ansicht)
         self.refresh_task_view()
+        
+    def add_category(self):
+        """Fügt eine neue Kategorie hinzu."""
+        new_category = tk.simpledialog.askstring("Neue Kategorie", "Gib den Namen der neuen Kategorie ein:")
+        if new_category:
+            if new_category not in self.categories:
+                self.categories.append(new_category)
+                self.category_menu['menu'].add_command(label=new_category, command=tk._setit(self.selected_category, new_category))
+                messagebox.showinfo("Erfolg", f"Die Kategorie '{new_category}' wurde hinzugefügt!")
+            else:
+                messagebox.showerror("Fehler", f"Die Kategorie '{new_category}' existiert bereits.")
+
 
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
@@ -144,7 +169,7 @@ class StudyMasterPlanerUI:
             name = self.name_entry.get()
             deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
             priority = int(self.priority_entry.get())
-            tag = self.tag_entry.get()
+            category = self.selected_category.get()
 
             # Aufgabe erstellen
             self.planner.create_entry(name, deadline, priority, tag)

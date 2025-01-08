@@ -18,12 +18,13 @@ class Database:
             "name": entry.name,
             "deadline": entry.deadline.strftime("%Y-%m-%d"),
             "priority": entry.priority,
-            "tag": entry.tag,
+            "category": entry.category,  # Kategorie speichern
             "text": entry.text,
             "links": entry.links,
             "reminder": entry.reminder.time.strftime("%Y-%m-%d %H:%M:%S") if entry.reminder else None
         }
         self.save_data()
+
 
     def remove_entry(self, name: str):
         """Entfernt eine Aufgabe aus der Datenbank."""
@@ -34,19 +35,18 @@ class Database:
             raise ValueError(f"Aufgabe mit dem Namen '{name}' existiert nicht.")
 
     def get_all_entries(self):
-        from planner.models import Aufgabe  # Lokaler Import
-        tasks = [
+        """Gibt alle Aufgaben als Liste von `Aufgabe`-Objekten zurück."""
+        from planner.models import Aufgabe
+        return [
             Aufgabe(
                 name=data["name"],
                 deadline=datetime.strptime(data["deadline"], "%Y-%m-%d"),
                 priority=data["priority"],
-                tag=data["tag"],
+                category=data["category"],  # Kategorie laden
                 text=data["text"]
             ) for data in self.entries.values()
         ]
-        print("Geladene Aufgaben aus der Datenbank:", tasks)  # Debugging
-        return tasks
-
+        
     def check_name_exists(self, name: str) -> bool:
         """Prüft, ob eine Aufgabe mit dem Namen existiert."""
         return name in self.entries
