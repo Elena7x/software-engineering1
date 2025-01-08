@@ -79,13 +79,15 @@ class StudyMasterPlanerUI:
         self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
 
         tk.Label(frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
-        self.priority_values = ["Sehr Niedrig", "Niedrig","Hoch", "Sehr Hoch"]
+        self.priority_values = ["Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
         self.selected_priority = tk.StringVar()
+        self.selected_priority.set(self.priority_values[1])  # Standardwert: "Niedrig"
         self.priority_menu = tk.OptionMenu(frame, self.selected_priority, *self.priority_values)
         self.priority_menu.grid(row=2, column=1, padx=5, pady=5)
 
         tk.Label(frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
         self.selected_category = tk.StringVar()
+        self.selected_category.set(self.categories[0])  # Standardkategorie
         self.category_menu = tk.OptionMenu(frame, self.selected_category, *self.categories)
         self.category_menu.grid(row=3, column=1, padx=5, pady=5)
 
@@ -143,20 +145,20 @@ class StudyMasterPlanerUI:
 
         # Hole die Werte aus der Treeview
         item = self.tree.item(selected_item[0], "values")
-        name, deadline, priority, category = item
+        name, deadline, priority_text, category = item
 
-        # Werte in die Eingabefelder einfügen
+        # Name in das Eingabefeld einfügen
         self.name_entry.delete(0, tk.END)
         self.name_entry.insert(0, name)
 
-        self.deadline_entry.delete(0, tk.END)
-        self.deadline_entry.insert(0, deadline)
+        # Deadline in das Label einfügen
+        self.deadline_label.config(text=deadline)
 
+        # Priorität in das Dropdown-Menü einfügen
         self.selected_priority.set(priority_text)
 
+        # Kategorie in das Dropdown-Menü einfügen
         self.selected_category.set(category)
-
-
 
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
