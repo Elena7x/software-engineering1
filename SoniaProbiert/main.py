@@ -63,6 +63,10 @@ class StudyMasterPlanerUI:
         # Button zum Speichern der Änderungen
         save_button = tk.Button(frame, text="Änderungen speichern", command=self.update_task)
         save_button.grid(row=5, column=0, columnspan=2, pady=10)
+        
+        # Button zum Löschen der ausgewählten Aufgabe
+        delete_button = tk.Button(frame, text="Aufgabe löschen", command=self.delete_task)
+        delete_button.grid(row=6, column=0, columnspan=2, pady=10)
 
     def create_task_view(self):
         """Erstellt die Treeview zur Anzeige der Aufgaben."""
@@ -84,6 +88,54 @@ class StudyMasterPlanerUI:
         
         # Bind Treeview-Auswahl an Methode
         self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
+
+    def refresh_task_view(self):
+        """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
+        # Lade die aktuellen Aufgaben aus der Datenbank
+        tasks = self.planner.load_entries()
+
+        # Lösche alle Einträge aus der Treeview
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # Füge die Aufgaben erneut in die Treeview ein
+        for task in tasks:
+            self.tree.insert(
+                "", "end",
+                values=(task.name, task.deadline.strftime("%Y-%m-%d"), task.priority, task.tag)
+            )
+
+    def on_treeview_select(self, event):
+        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder."""
+        selected_item = self.tree.selection()
+        if not selected_item:
+            return
+
+        # Hole die Werte aus der Treeview
+        item = self.tree.item(selected_item[0], "values")
+        name, deadline, priority, tag = item
+
+        # Werte in die Eingabefelder einfügen
+        self.name_entry.delete(0, tk.END)
+        self.name_entry.insert(0, name)
+
+        self.deadline_entry.delete(0, tk.END)
+        self.deadline_entry.insert(0, deadline)
+
+        self.priority_entry.delete(0, tk.END)
+        self.priority_entry.insert(0, priority)
+
+        self.tag_entry.delete(0, tk.END)
+        self.tag_entry.insert(0, tag)
+
+
+    def show_calendar_view(self):
+        # Dummy-Methode für Kalenderansicht (kann angepasst werden)
+        messagebox.showinfo("Kalenderansicht", "Kalenderansicht wird hier angezeigt!")
+
+    def show_list_view(self):
+        # Dummy-Methode für Listenansicht (aktuell aktualisiert sie nur die Ansicht)
+        self.refresh_task_view()
 
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
@@ -143,77 +195,30 @@ class StudyMasterPlanerUI:
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich aktualisiert!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
-
-    def refresh_task_view(self):
-        """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
-        # Lösche alle vorhandenen Einträge in der Treeview
-        for item in self.tree.get_children():
-            self.tree.delete(item)
-
-        # Lade die Aufgaben aus dem Planer
-        for task in self.planner.load_entries():
-            # Füge jede Aufgabe als Zeile in die Treeview ein
-            self.tree.insert(
-                "", "end", 
-                values=(
-                    task.name, 
-                    task.deadline.strftime("%Y-%m-%d"), 
-                    task.priority, 
-                    task.tag
-                )
-            )
-
-    def on_treeview_select(self, event):
-        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder."""
-        selected_item = self.tree.selection()
-        if not selected_item:
-            return
-
-        # Hole die Werte aus der Treeview
-        item = self.tree.item(selected_item[0], "values")
-        name, deadline, priority, tag = item
-
-        # Werte in die Eingabefelder einfügen
-        self.name_entry.delete(0, tk.END)
-        self.name_entry.insert(0, name)
-
-        self.deadline_entry.delete(0, tk.END)
-        self.deadline_entry.insert(0, deadline)
-
-        self.priority_entry.delete(0, tk.END)
-        self.priority_entry.insert(0, priority)
-
-        self.tag_entry.delete(0, tk.END)
-        self.tag_entry.insert(0, tag)
-
-
-    def show_calendar_view(self):
-        # Dummy-Methode für Kalenderansicht (kann angepasst werden)
-        messagebox.showinfo("Kalenderansicht", "Kalenderansicht wird hier angezeigt!")
-
-    def show_list_view(self):
-        # Dummy-Methode für Listenansicht (aktuell aktualisiert sie nur die Ansicht)
-        self.refresh_task_view()
-
+            
     def delete_task(self):
-        """Löscht die ausgewählte Aufgabe und aktualisiert die Anzeige."""
+        """Löscht die ausgewählte Aufgabe."""
         try:
-            # Ausgewählte Aufgabe in der Treeview abrufen
-            selected_item = self.tree.selection()[0]  # ID der ausgewählten Zeile
-            task_name = self.tree.item(selected_item, "values")[0]  # Name der Aufgabe
+            # Hole die ausgewählte Zeile in der Treeview
+            selected_item = self.tree.selection()
+            if not selected_item:
+                messagebox.showerror("Fehler", "Bitte eine Aufgabe auswählen!")
+                return
 
-            # Aufgabe aus dem Planer löschen
+            # Hole den Namen der Aufgabe aus der Treeview
+            task_name = self.tree.item(selected_item[0], "values")[0]
+
+            # Aufgabe aus dem Planer und der Datenbank löschen
             self.planner.delete_entry(task_name)
 
-            # Treeview aktualisieren
+            # Aktualisiere die Treeview
             self.refresh_task_view()
 
             # Erfolgsmeldung anzeigen
-            messagebox.showinfo("Erfolg", f"Aufgabe '{task_name}' wurde gelöscht!")
-        except IndexError:
-            messagebox.showerror("Fehler", "Bitte eine Aufgabe auswählen!")
+            messagebox.showinfo("Erfolg", f"Die Aufgabe '{task_name}' wurde gelöscht!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
+
 
 # Hauptprogramm starten
 if __name__ == "__main__":
