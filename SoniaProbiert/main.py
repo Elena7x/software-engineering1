@@ -31,13 +31,17 @@ class StudyMasterPlanerUI:
         self.task_input_frame = tk.Frame(self.root)  # Frame für "Aufgaben Hinzufügen"
         self.task_view_frame = tk.Frame(self.root)  # Frame für die Aufgabenliste
 
-        # Standardansicht: Aufgabenliste anzeigen
+        # Liste und Eingabemaske erstellen
         self.create_task_view(self.task_view_frame)
         self.create_task_input_section(self.task_input_frame)
+
+        # Standardansicht: Nur die Liste anzeigen
         self.task_view_frame.pack(fill="both", expand=True)
+        self.task_input_frame.pack_forget()
 
         # Menü erstellen
         self.create_menu()
+
 
     def create_menu(self):
         menu = tk.Menu(self.root)
@@ -45,13 +49,9 @@ class StudyMasterPlanerUI:
 
         # Ansicht-Menü
         view_menu = tk.Menu(menu, tearoff=0)
-        menu.add_command(label="Aufgaben Hinzufügen", command=self.show_task_input)
-        
-        # Ansicht-Menü
-        view_menu = tk.Menu(menu, tearoff=0)
         menu.add_cascade(label="Ansicht", menu=view_menu)
-        view_menu.add_command(label="Kalenderansicht", command=self.show_calendar_view)
-        view_menu.add_command(label="Listenansicht", command=self.show_task_view)
+        view_menu.add_command(label="Aufgaben Hinzufügen anzeigen", command=self.show_task_input)
+        view_menu.add_command(label="Aufgaben Hinzufügen ausblenden", command=self.hide_task_input)
 
     def create_task_input_section(self, parent_frame):
         frame = tk.Frame(parent_frame)
@@ -161,13 +161,11 @@ class StudyMasterPlanerUI:
         
     def show_task_input(self):
         """Zeigt den Bereich 'Aufgaben Hinzufügen' an."""
-        self.task_view_frame.pack_forget()  # Versteckt die Aufgabenliste
         self.task_input_frame.pack(fill="both", expand=True)  # Zeigt den Bereich zum Hinzufügen von Aufgaben an
 
-    def show_task_view(self):
-        """Zeigt die Aufgabenliste an."""
+    def hide_task_input(self):
+        """Blendet den Bereich 'Aufgaben Hinzufügen' aus."""
         self.task_input_frame.pack_forget()  # Versteckt den Bereich zum Hinzufügen von Aufgaben
-        self.task_view_frame.pack(fill="both", expand=True)  # Zeigt die Aufgabenliste an
 
         
     def add_category(self):
