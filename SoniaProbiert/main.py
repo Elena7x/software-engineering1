@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter.ttk import Treeview
 from tkinter import simpledialog
 from datetime import datetime
+from tkcalendar import Calendar
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -57,9 +58,11 @@ class StudyMasterPlanerUI:
         self.name_entry = tk.Entry(frame)
         self.name_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        tk.Label(frame, text="Deadline (YYYY-MM-DD):").grid(row=1, column=0, padx=5, pady=5)
-        self.deadline_entry = tk.Entry(frame)
+        tk.Label(frame, text="Deadline:").grid(row=1, column=0, padx=5, pady=5)
+        self.deadline_entry = tk.Entry(frame)  # Nur Anzeige
         self.deadline_entry.grid(row=1, column=1, padx=5, pady=5)
+        self.deadline_button = tk.Button(frame, text="Kalender öffnen", command=self.open_calendar)
+        self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
 
         tk.Label(frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
         self.priority_values = ["Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
@@ -200,6 +203,23 @@ class StudyMasterPlanerUI:
         for category in self.categories:
             self.category_menu['menu'].add_command(label=category, command=tk._setit(self.selected_category, category))
         self.selected_category.set(self.categories[0])  # Setze die Standardkategorie
+    
+    def open_calendar(self):
+        """Öffnet einen Kalender zum Auswählen des Datums."""
+        calendar_window = tk.Toplevel(self.root)
+        calendar_window.title("Wähle ein Datum")
+
+        calendar = Calendar(calendar_window, date_pattern="yyyy-mm-dd")
+        calendar.pack(pady=10, padx=10)
+
+        def select_date():
+            selected_date = calendar.get_date()
+            self.deadline_entry.delete(0, tk.END)
+            self.deadline_entry.insert(0, selected_date)
+            calendar_window.destroy()
+
+        select_button = tk.Button(calendar_window, text="Datum auswählen", command=select_date)
+        select_button.pack(pady=10)
         
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
