@@ -59,10 +59,13 @@ class StudyMasterPlanerUI:
         self.name_entry.grid(row=0, column=1, padx=5, pady=5)
 
         tk.Label(frame, text="Deadline:").grid(row=1, column=0, padx=5, pady=5)
-        self.deadline_entry = tk.Entry(frame)  # Nur Anzeige
-        self.deadline_entry.grid(row=1, column=1, padx=5, pady=5)
-        self.deadline_button = tk.Button(frame, text="Kalender öffnen", command=self.open_calendar)
-        self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
+        # Kalender direkt in die GUI einfügen
+        self.calendar = Calendar(frame, date_pattern="yyyy-mm-dd")
+        self.calendar.grid(row=1, column=1, padx=5, pady=5)
+        #self.deadline_entry = tk.Entry(frame)  # Nur Anzeige
+        #self.deadline_entry.grid(row=1, column=1, padx=5, pady=5)
+        #self.deadline_button = tk.Button(frame, text="Kalender öffnen", command=self.open_calendar)
+        #self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
 
         tk.Label(frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
         self.priority_values = ["Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
@@ -226,9 +229,15 @@ class StudyMasterPlanerUI:
         try:
             # Eingaben aus den Feldern lesen
             name = self.name_entry.get()
-            deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
+            deadline = datetime.strptime(self.calendar.get_date(), "%Y-%m-%d")  # Datum aus dem Kalender
             priority_text = self.selected_priority.get()
-            priority = self.priority_reverse_mapping[priority_text]
+            priority_mapping = {
+                "Sehr Niedrig": 1,
+                "Niedrig": 2,
+                "Hoch": 3,
+                "Sehr Hoch": 4
+            }
+            priority = priority_mapping[priority_text]
             category = self.selected_category.get()
 
             # Aufgabe erstellen
@@ -239,13 +248,11 @@ class StudyMasterPlanerUI:
 
             # Eingabefelder leeren
             self.name_entry.delete(0, tk.END)
-            self.deadline_entry.delete(0, tk.END)
 
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
-
-            
+    
     def update_task(self):
         """Speichert die geänderten Daten der ausgewählten Aufgabe."""
         try:
