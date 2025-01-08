@@ -5,11 +5,11 @@ from planner.models import Aufgabe, Reminder
 
 
 class Aufgabe:
-    def __init__(self, name: str, deadline: datetime, priority: int = 1, tag: str = "", text: str = ""):
+    def __init__(self, name: str, deadline: datetime, priority: int = 1, category: str = "", text: str = ""):
         self.name = name
         self.deadline = deadline
         self.priority = priority
-        self.tag = tag
+        self.category = category
         self.text = text
         self.links = []
         self.reminder = None
@@ -26,7 +26,7 @@ class Aufgabe:
         self.reminder = Reminder(self.name, time)
 
     def __repr__(self):
-        return f"<Aufgabe(name={self.name}, deadline={self.deadline}, priority={self.priority}, tag={self.tag})>"
+        return f"<Aufgabe(name={self.name}, deadline={self.deadline}, priority={self.priority}, category={self.category})>"
 
 
 class Reminder:
@@ -82,12 +82,12 @@ class StudyMasterPlaner:
         """Gibt alle Aufgaben zurück."""
         return list(self.entries.values())
 
-    def filter_entries(self, priority: int = None, tag: str = None) -> List[Aufgabe]:
-        """Filtert Aufgaben nach Priorität und/oder Tag."""
+    def filter_entries(self, priority: int = None, category: str = None) -> List[Aufgabe]:
+        """Filtert Aufgaben nach Priorität und/oder category."""
         return [
             entry for entry in self.entries.values()
             if (priority is None or entry.priority == priority) and
-               (tag is None or entry.tag == tag)
+               (category is None or entry. category == category)
         ]
 
     def __repr__(self):

@@ -29,9 +29,9 @@ class StudyMasterPlanerUI:
         self.root.config(menu=menu)
 
         # Datei-Menü
-        file_menu = tk.Menu(menu, tearoff=0)
-        menu.add_cascade(label="Datei", menu=file_menu)
-        file_menu.add_command(label="Beenden", command=self.root.quit)
+        #file_menu = tk.Menu(menu, tearoff=0)
+        #menu.add_cascade(label="Datei", menu=file_menu)
+        #file_menu.add_command(label="Beenden", command=self.root.quit)
 
         # Ansicht-Menü
         view_menu = tk.Menu(menu, tearoff=0)
@@ -87,17 +87,17 @@ class StudyMasterPlanerUI:
     def create_task_view(self):
         """Erstellt die Treeview zur Anzeige der Aufgaben."""
         # Treeview konfigurieren
-        self.tree = Treeview(self.root, columns=("Name", "Deadline", "Priorität", "Tag"), show="headings")
+        self.tree = Treeview(self.root, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
         self.tree.heading("Name", text="Name")
         self.tree.heading("Deadline", text="Deadline")
         self.tree.heading("Priorität", text="Priorität")
-        self.tree.heading("Tag", text="Tag")
+        self.tree.heading("category", text="category")
 
         # Spaltenbreite anpassen (optional)
         self.tree.column("Name", width=200)
         self.tree.column("Deadline", width=100)
         self.tree.column("Priorität", width=80)
-        self.tree.column("Tag", width=100)
+        self.tree.column("category", width=100)
 
         # Treeview packen
         self.tree.pack(pady=10, fill="both", expand=True)
@@ -126,7 +126,7 @@ class StudyMasterPlanerUI:
 
         # Hole die Werte aus der Treeview
         item = self.tree.item(selected_item[0], "values")
-        name, deadline, priority, tag = item
+        name, deadline, priority, category = item
 
         # Werte in die Eingabefelder einfügen
         self.name_entry.delete(0, tk.END)
@@ -138,8 +138,8 @@ class StudyMasterPlanerUI:
         self.priority_entry.delete(0, tk.END)
         self.priority_entry.insert(0, priority)
 
-        self.tag_entry.delete(0, tk.END)
-        self.tag_entry.insert(0, tag)
+        self.category_entry.delete(0, tk.END)
+        self.category_entry.insert(0, category)
 
 
     def show_calendar_view(self):
@@ -172,7 +172,7 @@ class StudyMasterPlanerUI:
             category = self.selected_category.get()
 
             # Aufgabe erstellen
-            self.planner.create_entry(name, deadline, priority, tag)
+            self.planner.create_entry(name, deadline, priority, category)
 
             # Aktualisiere die Treeview
             self.refresh_task_view()
@@ -181,7 +181,7 @@ class StudyMasterPlanerUI:
             self.name_entry.delete(0, tk.END)
             self.deadline_entry.delete(0, tk.END)
             self.priority_entry.delete(0, tk.END)
-            self.tag_entry.delete(0, tk.END)
+            self.category_entry.delete(0, tk.END)
 
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
         except Exception as e:
@@ -202,18 +202,18 @@ class StudyMasterPlanerUI:
             new_name = self.name_entry.get()
             new_deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
             new_priority = int(self.priority_entry.get())
-            new_tag = self.tag_entry.get()
+            new_category = self.category_entry.get()
 
             # Bearbeitung der Aufgabe
             if old_name == new_name:
                 # Wenn der Name nicht geändert wurde, nur die Felder aktualisieren
                 self.planner.edit_entry(new_name, "deadline", new_deadline)
                 self.planner.edit_entry(new_name, "priority", new_priority)
-                self.planner.edit_entry(new_name, "tag", new_tag)
+                self.planner.edit_entry(new_name, "category", new_category)
             else:
                 # Wenn der Name geändert wurde, alte Aufgabe löschen und neue erstellen
                 self.planner.delete_entry(old_name)
-                self.planner.create_entry(new_name, new_deadline, new_priority, new_tag)
+                self.planner.create_entry(new_name, new_deadline, new_priority, new_category)
 
             # Treeview aktualisieren
             self.refresh_task_view()
