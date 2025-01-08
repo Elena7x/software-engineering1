@@ -46,12 +46,17 @@ class StudyMasterPlanerUI:
     def create_menu(self):
         menu = tk.Menu(self.root)
         self.root.config(menu=menu)
-
+        
+        # Ansicht-Menü
+        view_menu = tk.Menu(menu, tearoff=0)
+        menu.add_command(label="Aufgaben Hinzufügen", command=self.show_task_input)
+        
         # Ansicht-Menü
         view_menu = tk.Menu(menu, tearoff=0)
         menu.add_cascade(label="Ansicht", menu=view_menu)
-        view_menu.add_command(label="Aufgaben Hinzufügen anzeigen", command=self.show_task_input)
-        view_menu.add_command(label="Aufgaben Hinzufügen ausblenden", command=self.hide_task_input)
+        view_menu.add_command(label="Kalenderansicht", command=self.show_calendar_view)
+        view_menu.add_command(label="Listenansicht", command=self.hide_task_input)
+
 
     def create_task_input_section(self, parent_frame):
         frame = tk.Frame(parent_frame)
