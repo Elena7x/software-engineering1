@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List
-
+from planner.database import Database
 
 class Aufgabe:
     def __init__(self, name: str, deadline: datetime, priority: int = 1, tag: str = "", text: str = ""):
@@ -44,6 +44,7 @@ class StudyMasterPlaner:
     def __init__(self):
         """Initialisiert den Planer mit einer leeren Liste von Aufgaben."""
         self.entries = {}
+        self.database = Database()  # Initialisierung der Datenbank
 
     def create_entry(self, name: str, deadline: datetime, priority: int = 1, tag: str = "", text: str = ""):
         """Erstellt eine neue Aufgabe."""
