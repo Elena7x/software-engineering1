@@ -85,15 +85,23 @@ class StudyMasterPlanerUI:
         self.priority_menu = tk.OptionMenu(frame, self.selected_priority, *self.priority_values)
         self.priority_menu.grid(row=2, column=1, padx=5, pady=5)
 
+        # Kategorie-Bereich
         tk.Label(frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
         self.selected_category = tk.StringVar()
         self.selected_category.set(self.categories[0])  # Standardkategorie
         self.category_menu = tk.OptionMenu(frame, self.selected_category, *self.categories)
-        self.category_menu.grid(row=3, column=1, padx=5, pady=5)
+        self.category_menu.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 
-        # Buttons
+        # Kategorie-Buttons rechts neben dem Dropdown-Menü
+        self.add_category_button = tk.Button(frame, text="Hinzufügen", command=self.add_category)
+        self.add_category_button.grid(row=3, column=2, padx=5, pady=5)
+
+        self.delete_category_button = tk.Button(frame, text="Löschen", command=self.delete_category)
+        self.delete_category_button.grid(row=3, column=3, padx=5, pady=5)
+
+        # Buttons unten
         button_frame = tk.Frame(frame)
-        button_frame.grid(row=4, column=0, columnspan=2, pady=10)
+        button_frame.grid(row=4, column=0, columnspan=4, pady=10)
 
         # Button: Aufgabe hinzufügen
         self.add_button = tk.Button(button_frame, text="Aufgabe hinzufügen", command=self.add_task, width=18, height=1)
@@ -108,14 +116,6 @@ class StudyMasterPlanerUI:
         self.delete_button = tk.Button(button_frame, text="Aufgabe löschen", command=self.delete_task, width=18, height=1)
         self.delete_button.pack(side=tk.LEFT, padx=10)
         self.delete_button.pack_forget()  # Standardmäßig ausblenden
-
-        # Kategorie hinzufügen
-        self.add_category_button = tk.Button(button_frame, text="Kategorie hinzufügen", command=self.add_category, width=18, height=1)
-        self.add_category_button.pack(side=tk.LEFT, padx=10)
-
-        # Kategorie löschen
-        self.delete_category_button = tk.Button(button_frame, text="Kategorie löschen", command=self.delete_category, width=18, height=1)
-        self.delete_category_button.pack(side=tk.LEFT, padx=10)
 
     def create_task_view(self, parent_frame):
         self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
