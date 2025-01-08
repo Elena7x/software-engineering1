@@ -58,15 +58,15 @@ class StudyMasterPlanerUI:
         self.name_entry = tk.Entry(frame)
         self.name_entry.grid(row=0, column=1, padx=5, pady=5)
 
+        # Button und Label für Deadline
         tk.Label(frame, text="Deadline:").grid(row=1, column=0, padx=5, pady=5)
-        # Kalender direkt in die GUI einfügen
-        self.calendar = Calendar(frame, date_pattern="yyyy-mm-dd")
-        self.calendar.grid(row=1, column=1, padx=5, pady=5)
-        #self.deadline_entry = tk.Entry(frame)  # Nur Anzeige
-        #self.deadline_entry.grid(row=1, column=1, padx=5, pady=5)
-        #self.deadline_button = tk.Button(frame, text="Kalender öffnen", command=self.open_calendar)
-        #self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
+        self.deadline_label = tk.Label(frame, text="Kein Datum ausgewählt", bg="white", relief="sunken", width=20)
+        self.deadline_label.grid(row=1, column=1, padx=5, pady=5)
 
+        self.deadline_button = tk.Button(frame, text="Datum auswählen", command=self.open_calendar_popup)
+        self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
+
+        #Priorität
         tk.Label(frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
         self.priority_values = ["Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
         self.selected_priority = tk.StringVar()
@@ -74,6 +74,7 @@ class StudyMasterPlanerUI:
         self.priority_menu = tk.OptionMenu(frame, self.selected_priority, *self.priority_values)
         self.priority_menu.grid(row=2, column=1, padx=5, pady=5)
 
+        #Kategorie
         tk.Label(frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
         self.selected_category = tk.StringVar()
         self.selected_category.set(self.categories[0])  # Standardkategorie
@@ -207,18 +208,17 @@ class StudyMasterPlanerUI:
             self.category_menu['menu'].add_command(label=category, command=tk._setit(self.selected_category, category))
         self.selected_category.set(self.categories[0])  # Setze die Standardkategorie
     
-    def open_calendar(self):
-        """Öffnet einen Kalender zum Auswählen des Datums."""
+    def open_calendar_popup(self):
+        """Öffnet ein Popup-Fenster mit einem Kalender zur Auswahl eines Datums."""
         calendar_window = tk.Toplevel(self.root)
-        calendar_window.title("Wähle ein Datum")
+        calendar_window.title("Datum auswählen")
 
         calendar = Calendar(calendar_window, date_pattern="yyyy-mm-dd")
         calendar.pack(pady=10, padx=10)
 
         def select_date():
             selected_date = calendar.get_date()
-            self.deadline_entry.delete(0, tk.END)
-            self.deadline_entry.insert(0, selected_date)
+            self.deadline_label.config(text=selected_date)
             calendar_window.destroy()
 
         select_button = tk.Button(calendar_window, text="Datum auswählen", command=select_date)
@@ -229,7 +229,12 @@ class StudyMasterPlanerUI:
         try:
             # Eingaben aus den Feldern lesen
             name = self.name_entry.get()
-            deadline = datetime.strptime(self.calendar.get_date(), "%Y-%m-%d")  # Datum aus dem Kalender
+            
+            deadline_text = self.deadline_label.cget("text")
+            if deadline_text == "Kein Datum ausgewählt":
+                raise ValueError("Bitte wählen Sie ein Datum aus.")
+            deadline = datetime.strptime(deadline_text, "%Y-%m-%d")
+            
             priority_text = self.selected_priority.get()
             priority_mapping = {
                 "Sehr Niedrig": 1,
@@ -238,6 +243,7 @@ class StudyMasterPlanerUI:
                 "Sehr Hoch": 4
             }
             priority = priority_mapping[priority_text]
+            
             category = self.selected_category.get()
 
             # Aufgabe erstellen
@@ -248,6 +254,7 @@ class StudyMasterPlanerUI:
 
             # Eingabefelder leeren
             self.name_entry.delete(0, tk.END)
+            self.deadline_label.config(text="Kein Datum ausgewählt")
 
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich hinzugefügt!")
         except Exception as e:
