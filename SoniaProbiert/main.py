@@ -40,7 +40,7 @@ class StudyMasterPlanerUI:
 
     def create_task_input_section(self):
         frame = tk.Frame(self.root)
-        frame.pack(pady=10, padx=10, fill="x")
+        frame.pack(pady=20, padx=10, fill="x")  # Mehr Abstand um den gesamten Bereich
 
         # Eingabefelder für neue Aufgaben
         tk.Label(frame, text="Name:").grid(row=0, column=0, padx=5, pady=5)
@@ -55,34 +55,32 @@ class StudyMasterPlanerUI:
         self.priority_entry = tk.Entry(frame)
         self.priority_entry.grid(row=2, column=1, padx=5, pady=5)
 
-        tk.Label(frame, text="Tag:").grid(row=3, column=0, padx=5, pady=5)
-        self.tag_entry = tk.Entry(frame)
-        self.tag_entry.grid(row=3, column=1, padx=5, pady=5)
-
-        # Button zum Hinzufügen von Aufgaben
-        add_button = tk.Button(frame, text="Aufgabe hinzufügen", command=self.add_task)
-        add_button.grid(row=4, column=0, columnspan=2, pady=10)
-        
-        # Button zum Speichern der Änderungen
-        save_button = tk.Button(frame, text="Änderungen speichern", command=self.update_task)
-        save_button.grid(row=5, column=0, columnspan=2, pady=10)
-        
-        # Button zum Löschen der ausgewählten Aufgabe
-        delete_button = tk.Button(frame, text="Aufgabe löschen", command=self.delete_task)
-        delete_button.grid(row=6, column=0, columnspan=2, pady=10)
-        
         # Dropdown-Menü für Kategorien
-        tk.Label(frame, text="Kategorie:").grid(row=4, column=0, padx=5, pady=5)
-
+        tk.Label(frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
         self.selected_category = tk.StringVar()
         self.selected_category.set(self.categories[0])  # Standardkategorie
-
         self.category_menu = tk.OptionMenu(frame, self.selected_category, *self.categories)
-        self.category_menu.grid(row=4, column=1, padx=5, pady=5)
+        self.category_menu.grid(row=3, column=1, padx=5, pady=5)
+
+        # Buttons
+        button_frame = tk.Frame(frame)  # Extra Frame für die Buttons
+        button_frame.grid(row=4, column=0, columnspan=2, pady=10)
+
+        # Button zum Hinzufügen von Aufgaben
+        add_button = tk.Button(button_frame, text="Aufgabe hinzufügen", command=self.add_task, width=18, height=1)
+        add_button.pack(side=tk.LEFT, padx=10)
+
+        # Button zum Speichern der Änderungen
+        save_button = tk.Button(button_frame, text="Änderungen speichern", command=self.update_task, width=18, height=1)
+        save_button.pack(side=tk.LEFT, padx=10)
+
+        # Button zum Löschen der ausgewählten Aufgabe
+        delete_button = tk.Button(button_frame, text="Aufgabe löschen", command=self.delete_task, width=18, height=1)
+        delete_button.pack(side=tk.LEFT, padx=10)
 
         # Button zum Hinzufügen neuer Kategorien
-        add_category_button = tk.Button(frame, text="Kategorie hinzufügen", command=self.add_category)
-        add_category_button.grid(row=5, column=0, columnspan=2, pady=10)
+        add_category_button = tk.Button(button_frame, text="Kategorie hinzufügen", command=self.add_category, width=18, height=1)
+        add_category_button.pack(side=tk.LEFT, padx=10)
 
 
     def create_task_view(self):
