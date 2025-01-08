@@ -13,14 +13,15 @@ class StudyMasterPlanerUI:
         self.root.title("Study Master Planer")
         self.planner = StudyMasterPlaner()
 
-        # Hauptlayout
+        # Standardkategorien definieren
+        self.categories = ["Kurs", "Persönliche Aufgaben"]
+
         self.create_menu()
         self.create_task_input_section()
         self.create_task_view()
-        
+
+        # Zeige gespeicherte Aufgaben an
         self.refresh_task_view()
-        
-        self.categories = ["Kurs", "Persönliche Aufgaben"]  # Standardkategorien
 
     def create_menu(self):
         menu = tk.Menu(self.root)
