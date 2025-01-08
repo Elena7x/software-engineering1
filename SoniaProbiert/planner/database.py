@@ -6,11 +6,13 @@ from planner.models import Aufgabe
 
 
 class Database:
-    def __init__(self, file_path="tasks.json"):
+    def __init__(self, file_path="tasks.json", categories_path="categories.json"):
         self.file_path = file_path
+        self.categories_path = categories_path
         self.entries = {}
-        print(f"JSON-Datei wird verwendet: {self.file_path}")  # Debugging
+        self.categories = ["Kurs", "Persönliche Aufgaben"]
         self.load_data()
+        self.load_categories()
 
     def save_entry(self, entry: Aufgabe):
         """Speichert eine neue Aufgabe in der Datenbank."""
@@ -66,3 +68,19 @@ class Database:
         """Speichert die aktuellen Daten in die JSON-Datei."""
         with open(self.file_path, "w") as file:
             json.dump(self.entries, file, indent=4)
+
+    def load_categories(self):
+        """Lädt Kategorien aus der JSON-Datei."""
+        try:
+            with open(self.categories_path, "r") as file:
+                self.categories = json.load(file)
+        except FileNotFoundError:
+            self.save_categories()
+        except json.JSONDecodeError:
+            print("Fehler beim Laden der Kategorien. Datei ist beschädigt.")
+            self.categories = ["Kurs", "Persönliche Aufgaben"]
+            
+    def save_categories(self):
+        """Speichert die Kategorien in einer JSON-Datei."""
+        with open(self.categories_path, "w") as file:
+            json.dump(self.categories, file, indent=4)

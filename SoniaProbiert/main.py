@@ -14,8 +14,8 @@ class StudyMasterPlanerUI:
         self.root.title("Study Master Planer")
         self.planner = StudyMasterPlaner()
 
-        # Standardkategorien definieren
-        self.categories = ["Kurs", "Persönliche Aufgaben"]
+        # Kategorien laden
+        self.categories = self.planner.database.categories
 
         self.create_menu()
         self.create_task_input_section()
@@ -156,11 +156,12 @@ class StudyMasterPlanerUI:
         if new_category:
             if new_category not in self.categories:
                 self.categories.append(new_category)
+                self.planner.database.categories = self.categories
+                self.planner.database.save_categories()
                 self.category_menu['menu'].add_command(label=new_category, command=tk._setit(self.selected_category, new_category))
                 messagebox.showinfo("Erfolg", f"Die Kategorie '{new_category}' wurde hinzugefügt!")
             else:
                 messagebox.showerror("Fehler", f"Die Kategorie '{new_category}' existiert bereits.")
-
 
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
