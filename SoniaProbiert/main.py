@@ -269,7 +269,7 @@ class StudyMasterPlanerUI:
     def update_task(self):
         """Speichert die geänderten Daten der ausgewählten Aufgabe."""
         try:
-            # Hole den ausgewählten Aufgaben-Namen
+            # Hole die ausgewählte Zeile in der Treeview
             selected_item = self.tree.selection()
             if not selected_item:
                 messagebox.showerror("Fehler", "Bitte eine Aufgabe auswählen!")
@@ -279,7 +279,13 @@ class StudyMasterPlanerUI:
 
             # Werte aus den Eingabefeldern lesen
             new_name = self.name_entry.get()
-            new_deadline = datetime.strptime(self.deadline_entry.get(), "%Y-%m-%d")
+
+            # Deadline aus dem Label auslesen
+            deadline_text = self.deadline_label.cget("text")
+            if deadline_text == "Kein Datum ausgewählt":
+                raise ValueError("Bitte wählen Sie ein Datum aus.")
+            new_deadline = datetime.strptime(deadline_text, "%Y-%m-%d")
+
             priority_text = self.selected_priority.get()
             priority_mapping = {
                 "Sehr Niedrig": 1,
@@ -304,6 +310,7 @@ class StudyMasterPlanerUI:
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich aktualisiert!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
+
 
             
     def delete_task(self):
