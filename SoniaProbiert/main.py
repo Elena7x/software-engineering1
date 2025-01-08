@@ -11,8 +11,17 @@ from planner.core import StudyMasterPlaner
 class StudyMasterPlanerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Study Master")
+        self.root.title("Study Master Planer")
         self.planner = StudyMasterPlaner()
+
+        # Mapping für Prioritäten (numerisch zu textuell)
+        self.priority_display_mapping = {
+            1: "Sehr Niedrig",
+            2: "Niedrig",
+            3: "Hoch",
+            4: "Sehr Hoch"
+        }
+        self.priority_reverse_mapping = {v: k for k, v in self.priority_display_mapping.items()}  # Text zu numerisch
 
         # Kategorien laden
         self.categories = self.planner.database.categories
@@ -23,14 +32,6 @@ class StudyMasterPlanerUI:
 
         # Zeige gespeicherte Aufgaben an
         self.refresh_task_view()
-        
-        self.priority_display_mapping = {
-            1: "Sehr Niedrig",
-            2: "Niedrig",
-            3: "Hoch",
-            4: "Sehr Hoch"
-        }
-        self.priority_reverse_mapping = {v: k for k, v in self.priority_display_mapping.items()}
 
     def create_menu(self):
         menu = tk.Menu(self.root)
