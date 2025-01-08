@@ -127,18 +127,22 @@ class StudyMasterPlanerUI:
             new_priority = int(self.priority_entry.get())
             new_tag = self.tag_entry.get()
 
-            # Aufgabe bearbeiten
-            if old_name != new_name:
-                self.planner.delete_entry(old_name)  # Alte Aufgabe entfernen, falls Name geändert
-            self.planner.create_entry(new_name, new_deadline, new_priority, new_tag)
+            # Bearbeitung der Aufgabe
+            if old_name == new_name:
+                # Wenn der Name nicht geändert wurde, nur die Felder aktualisieren
+                self.planner.edit_entry(new_name, "deadline", new_deadline)
+                self.planner.edit_entry(new_name, "priority", new_priority)
+                self.planner.edit_entry(new_name, "tag", new_tag)
+            else:
+                # Wenn der Name geändert wurde, alte Aufgabe löschen und neue erstellen
+                self.planner.delete_entry(old_name)
+                self.planner.create_entry(new_name, new_deadline, new_priority, new_tag)
 
             # Treeview aktualisieren
             self.refresh_task_view()
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich aktualisiert!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
-
-
 
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""

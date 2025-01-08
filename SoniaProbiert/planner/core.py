@@ -60,10 +60,13 @@ class StudyMasterPlaner:
     
     def edit_entry(self, name: str, field: str, new_value):
         """Bearbeitet ein Feld einer existierenden Aufgabe."""
-        if name not in self.entries:
-            raise ValueError(f"Keine Aufgabe mit dem Namen '{name}' gefunden.")
-        entry = self.entries[name]
-        entry.change_value(field, new_value)
+        tasks = self.database.get_all_entries()
+        for task in tasks:
+            if task.name == name:
+                task.change_value(field, new_value)
+                self.database.save_entry(task)
+                return
+        raise ValueError(f"Keine Aufgabe mit dem Namen '{name}' gefunden.")
         
     def load_entries(self):
         """Lädt alle Aufgaben aus der Datenbank."""

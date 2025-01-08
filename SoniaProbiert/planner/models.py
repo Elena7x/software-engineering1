@@ -11,11 +11,12 @@ class Aufgabe:
         self.reminder = None
 
     def change_value(self, field: str, new_value):
+        """Ändert den Wert eines Attributs der Aufgabe."""
         if hasattr(self, field):
             setattr(self, field, new_value)
         else:
-            raise ValueError(f"Field '{field}' does not exist in Aufgabe.")
-
+            raise ValueError(f"Das Feld '{field}' existiert nicht.")
+        
     def set_reminder(self, time: datetime):
         self.reminder = Reminder(self.name, time)
 
