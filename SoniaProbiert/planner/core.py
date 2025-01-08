@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import List
 from planner.database import Database
+from planner.models import Aufgabe, Reminder
+
 
 class Aufgabe:
     def __init__(self, name: str, deadline: datetime, priority: int = 1, tag: str = "", text: str = ""):

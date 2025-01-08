@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
-from planner.core import Aufgabe
+from planner.models import Aufgabe
+
+
 
 
 class Database:
@@ -32,9 +34,10 @@ class Database:
             self.save_data()
         else:
             raise ValueError(f"Aufgabe mit dem Namen '{name}' existiert nicht.")
-
+        
     def get_all_entries(self):
         """Gibt alle Aufgaben als Liste von `Aufgabe`-Objekten zurück."""
+        from planner.core import Aufgabe  # Lokaler Import
         return [
             Aufgabe(
                 name=data["name"],
