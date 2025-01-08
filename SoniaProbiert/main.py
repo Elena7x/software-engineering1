@@ -95,20 +95,22 @@ class StudyMasterPlanerUI:
         button_frame = tk.Frame(frame)
         button_frame.grid(row=4, column=0, columnspan=2, pady=10)
 
-        add_button = tk.Button(button_frame, text="Aufgabe hinzufügen", command=self.add_task, width=18, height=1)
-        add_button.pack(side=tk.LEFT, padx=10)
+        # Button: Aufgabe hinzufügen
+        self.add_button = tk.Button(button_frame, text="Aufgabe hinzufügen", command=self.add_task, width=18, height=1)
+        self.add_button.pack(side=tk.LEFT, padx=10)
 
-        save_button = tk.Button(button_frame, text="Änderungen speichern", command=self.update_task, width=18, height=1)
-        save_button.pack(side=tk.LEFT, padx=10)
+        # Button: Änderungen speichern
+        self.save_button = tk.Button(button_frame, text="Änderungen speichern", command=self.update_task, width=18, height=1)
+        self.save_button.pack(side=tk.LEFT, padx=10)
+        self.save_button.pack_forget()  # Standardmäßig ausblenden
 
-        delete_button = tk.Button(button_frame, text="Aufgabe löschen", command=self.delete_task, width=18, height=1)
-        delete_button.pack(side=tk.LEFT, padx=10)
+        # Button: Aufgabe löschen
+        self.delete_button = tk.Button(button_frame, text="Aufgabe löschen", command=self.delete_task, width=18, height=1)
+        self.delete_button.pack(side=tk.LEFT, padx=10)
+        self.delete_button.pack_forget()  # Standardmäßig ausblenden
 
-        add_category_button = tk.Button(button_frame, text="Kategorie hinzufügen", command=self.add_category, width=18, height=1)
-        add_category_button.pack(side=tk.LEFT, padx=10)
 
     def create_task_view(self, parent_frame):
-        """Erstellt die Treeview zur Anzeige der Aufgaben."""
         self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
         self.tree.heading("Name", text="Name")
         self.tree.heading("Deadline", text="Deadline")
@@ -122,6 +124,7 @@ class StudyMasterPlanerUI:
 
         self.tree.pack(pady=10, fill="both", expand=True)
         self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
+
 
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
@@ -138,27 +141,29 @@ class StudyMasterPlanerUI:
             )
 
     def on_treeview_select(self, event):
-        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder."""
+        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder und passt die Button-Sichtbarkeit an."""
         selected_item = self.tree.selection()
-        if not selected_item:
-            return
+        if selected_item:
+            # Wenn eine Aufgabe ausgewählt ist, zeige Speichern- und Löschen-Button
+            self.add_button.pack_forget()
+            self.save_button.pack(side=tk.LEFT, padx=10)
+            self.delete_button.pack(side=tk.LEFT, padx=10)
 
-        # Hole die Werte aus der Treeview
-        item = self.tree.item(selected_item[0], "values")
-        name, deadline, priority_text, category = item
+            # Hole die Werte aus der Treeview
+            item = self.tree.item(selected_item[0], "values")
+            name, deadline, priority_text, category = item
 
-        # Name in das Eingabefeld einfügen
-        self.name_entry.delete(0, tk.END)
-        self.name_entry.insert(0, name)
-
-        # Deadline in das Label einfügen
-        self.deadline_label.config(text=deadline)
-
-        # Priorität in das Dropdown-Menü einfügen
-        self.selected_priority.set(priority_text)
-
-        # Kategorie in das Dropdown-Menü einfügen
-        self.selected_category.set(category)
+            # Eingabefelder füllen
+            self.name_entry.delete(0, tk.END)
+            self.name_entry.insert(0, name)
+            self.deadline_label.config(text=deadline)
+            self.selected_priority.set(priority_text)
+            self.selected_category.set(category)
+        else:
+            # Wenn keine Aufgabe ausgewählt ist, zeige nur den "Aufgabe hinzufügen"-Button
+            self.add_button.pack(side=tk.LEFT, padx=10)
+            self.save_button.pack_forget()
+            self.delete_button.pack_forget()
 
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
