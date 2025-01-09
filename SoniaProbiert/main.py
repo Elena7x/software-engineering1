@@ -123,25 +123,33 @@ class StudyMasterPlanerUI:
         self.cancel_button.pack_forget()  # Standardmäßig ausblenden
 
     def create_task_view(self, parent_frame):
-        # Filterbereich
-        filter_frame = tk.Frame(parent_frame)
-        filter_frame.pack(pady=10, fill="x")
+        # Filter- und Sortierbereich
+        filter_sort_frame = tk.Frame(parent_frame)
+        filter_sort_frame.pack(pady=10, fill="x")
 
         # Filter nach Kategorie
-        tk.Label(filter_frame, text="Filter Kategorie:").pack(side=tk.LEFT, padx=5)
+        tk.Label(filter_sort_frame, text="Filter Kategorie:").pack(side=tk.LEFT, padx=5)
         self.filter_category = tk.StringVar()
         self.filter_category.set("Alle")  # Standardwert
-        category_options = ["Alle"] + self.categories  # "Alle" hinzufügen
-        self.category_filter_menu = tk.OptionMenu(filter_frame, self.filter_category, *category_options, command=self.apply_filters)
+        category_options = ["Alle"] + self.categories
+        self.category_filter_menu = tk.OptionMenu(filter_sort_frame, self.filter_category, *category_options, command=self.apply_filters)
         self.category_filter_menu.pack(side=tk.LEFT, padx=5)
 
         # Filter nach Priorität
-        tk.Label(filter_frame, text="Filter Priorität:").pack(side=tk.LEFT, padx=5)
+        tk.Label(filter_sort_frame, text="Filter Priorität:").pack(side=tk.LEFT, padx=5)
         self.filter_priority = tk.StringVar()
         self.filter_priority.set("Alle")  # Standardwert
         priority_options = ["Alle", "Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
-        self.priority_filter_menu = tk.OptionMenu(filter_frame, self.filter_priority, *priority_options, command=self.apply_filters)
+        self.priority_filter_menu = tk.OptionMenu(filter_sort_frame, self.filter_priority, *priority_options, command=self.apply_filters)
         self.priority_filter_menu.pack(side=tk.LEFT, padx=5)
+
+        # Sortierung
+        tk.Label(filter_sort_frame, text="Sortieren nach:").pack(side=tk.LEFT, padx=5)
+        self.sort_option = tk.StringVar()
+        self.sort_option.set("Fälligkeitsdatum")  # Standardwert
+        sort_options = ["Fälligkeitsdatum", "Priorität", "Name"]
+        self.sort_menu = tk.OptionMenu(filter_sort_frame, self.sort_option, *sort_options, command=self.apply_filters)
+        self.sort_menu.pack(side=tk.LEFT, padx=5)
 
         # Aufgabenliste
         self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
@@ -286,9 +294,10 @@ class StudyMasterPlanerUI:
         self.cancel_button.pack_forget()
 
     def apply_filters(self, *args):
-        """Filtert die Aufgaben basierend auf den ausgewählten Kriterien."""
+        """Filtert und sortiert die Aufgaben basierend auf den ausgewählten Kriterien."""
         category_filter = self.filter_category.get()
         priority_filter = self.filter_priority.get()
+        sort_by = self.sort_option.get()
 
         # Mapping für Prioritäten
         priority_mapping = {
@@ -307,6 +316,14 @@ class StudyMasterPlanerUI:
         if priority_filter != "Alle":
             priority_value = priority_mapping[priority_filter]
             tasks = [task for task in tasks if task.priority == priority_value]
+
+        # Sortierung anwenden
+        if sort_by == "Fälligkeitsdatum":
+            tasks.sort(key=lambda task: task.deadline)
+        elif sort_by == "Priorität":
+            tasks.sort(key=lambda task: task.priority, reverse=True)
+        elif sort_by == "Name":
+            tasks.sort(key=lambda task: task.name)
 
         # Treeview aktualisieren
         self.tree.delete(*self.tree.get_children())
