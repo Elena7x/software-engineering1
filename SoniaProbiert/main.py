@@ -104,17 +104,20 @@ class StudyMasterPlanerUI:
         button_frame = tk.Frame(frame)
         button_frame.grid(row=5, column=0, columnspan=4, pady=10)
 
+        # Button: Aufgabe hinzufügen
         self.add_button = tk.Button(button_frame, text="Aufgabe hinzufügen", command=self.add_task, width=18, height=1)
         self.add_button.pack(side=tk.LEFT, padx=10)
 
+        # Button: Änderungen speichern
         self.save_button = tk.Button(button_frame, text="Änderungen speichern", command=self.update_task, width=18, height=1)
         self.save_button.pack(side=tk.LEFT, padx=10)
         self.save_button.pack_forget()  # Standardmäßig ausblenden
 
+        # Button: Aufgabe löschen
         self.delete_button = tk.Button(button_frame, text="Aufgabe löschen", command=self.delete_task, width=18, height=1)
         self.delete_button.pack(side=tk.LEFT, padx=10)
         self.delete_button.pack_forget()  # Standardmäßig ausblenden
-        
+
         # Button: Abbrechen
         self.cancel_button = tk.Button(button_frame, text="Abbrechen", command=self.cancel_selection, width=18, height=1)
         self.cancel_button.pack(side=tk.LEFT, padx=10)
@@ -215,25 +218,19 @@ class StudyMasterPlanerUI:
             self.selected_priority.set(priority_text)
             self.selected_category.set(category)
 
-            # Anhänge aus der Datenbank laden (optional, falls relevant)
-            task = self.planner.database.entries.get(name, {})
-            attachments = task.get("links", [])
-            self.attachment_list.delete(0, tk.END)
-            for attachment in attachments:
-                self.attachment_list.insert(tk.END, attachment)
+            # Anhänge aus der Datenbank laden
+            task = next((t for t in self.planner.load_entries() if t.name == name), None)
+            if task:
+                self.attachment_list.delete(0, tk.END)
+                for attachment in task.links:
+                    self.attachment_list.insert(tk.END, attachment)
         else:
             # Wenn keine Aufgabe ausgewählt ist, zeige nur den "Aufgabe Hinzufügen"-Button
             self.add_button.pack(side=tk.LEFT, padx=10)
             self.save_button.pack_forget()
             self.delete_button.pack_forget()
             self.cancel_button.pack_forget()
-        # Anhänge korrekt laden
-        task = next((t for t in self.planner.load_entries() if t.name == name), None)
-        if task:
-            self.attachment_list.delete(0, tk.END)
-            for attachment in task.links:
-                self.attachment_list.insert(tk.END, attachment)
-                
+
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
         messagebox.showinfo("Kalenderansicht", "Kalenderansicht wird hier angezeigt!")
@@ -317,6 +314,7 @@ class StudyMasterPlanerUI:
         self.save_button.pack_forget()
         self.delete_button.pack_forget()
         self.cancel_button.pack_forget()
+
 
 
     def apply_filters(self, *args):
