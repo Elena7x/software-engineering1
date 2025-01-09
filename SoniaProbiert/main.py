@@ -114,6 +114,12 @@ class StudyMasterPlanerUI:
         self.delete_button = tk.Button(button_frame, text="Aufgabe löschen", command=self.delete_task, width=18, height=1)
         self.delete_button.pack(side=tk.LEFT, padx=10)
         self.delete_button.pack_forget()  # Standardmäßig ausblenden
+        
+        # Button: Abbrechen
+        self.cancel_button = tk.Button(button_frame, text="Abbrechen", command=self.cancel_selection, width=18, height=1)
+        self.cancel_button.pack(side=tk.LEFT, padx=10)
+        self.cancel_button.pack_forget()  # Standardmäßig ausblenden
+
 
     def create_task_view(self, parent_frame):
         # Filter- und Sortierbereich
@@ -159,16 +165,14 @@ class StudyMasterPlanerUI:
         self.tree.pack(pady=10, fill="both", expand=True)
         self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
 
-
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
         tasks = self.planner.load_entries()
-        """Aktualisiert die Treeview mit den aktuellen Aufgaben und berücksichtigt die Filter."""
-        self.apply_filters()
 
-        for item in self.tree.get_children():
-            self.tree.delete(item)
+        # Treeview leeren
+        self.tree.delete(*self.tree.get_children())
 
+        # Aufgaben einfügen
         for task in tasks:
             priority_text = self.priority_display_mapping.get(task.priority, "Unbekannt")
             self.tree.insert(
@@ -196,12 +200,20 @@ class StudyMasterPlanerUI:
             self.deadline_label.config(text=deadline)
             self.selected_priority.set(priority_text)
             self.selected_category.set(category)
+
+            # Anhänge aus der Datenbank laden (optional, falls relevant)
+            task = self.planner.database.entries.get(name, {})
+            attachments = task.get("links", [])
+            self.attachment_list.delete(0, tk.END)
+            for attachment in attachments:
+                self.attachment_list.insert(tk.END, attachment)
         else:
             # Wenn keine Aufgabe ausgewählt ist, zeige nur den "Aufgabe Hinzufügen"-Button
             self.add_button.pack(side=tk.LEFT, padx=10)
             self.save_button.pack_forget()
             self.delete_button.pack_forget()
             self.cancel_button.pack_forget()
+
             
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
@@ -279,12 +291,14 @@ class StudyMasterPlanerUI:
         self.deadline_label.config(text="Kein Datum ausgewählt")
         self.selected_priority.set(self.priority_values[1])  # Priorität zurücksetzen
         self.selected_category.set(self.categories[0])  # Kategorie zurücksetzen
+        self.attachment_list.delete(0, tk.END)  # Anhänge zurücksetzen
 
         # Buttons aktualisieren
         self.add_button.pack(side=tk.LEFT, padx=10)
         self.save_button.pack_forget()
         self.delete_button.pack_forget()
         self.cancel_button.pack_forget()
+
 
     def apply_filters(self, *args):
         """Filtert und sortiert die Aufgaben basierend auf den ausgewählten Kriterien."""

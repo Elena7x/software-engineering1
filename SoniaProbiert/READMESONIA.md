@@ -1,24 +1,6 @@
 To Do 
 
-### **1. Kategorienverwaltung**
-- **Löschen von Kategorien**:
-  - Aktuell können Kategorien gelöscht werden, jedoch fehlt die visuelle Rückmeldung (z. B. direktes Aktualisieren des Dropdowns).
-  - Die Liste der Kategorien sollte nach dem Löschen dynamisch aktualisiert werden.
 
-- **Kategorien-Duplikate verhindern**:
-  - Es gibt bereits eine Prüfung auf Duplikate. Jedoch sollte dies für unterschiedliche Fälle (Groß-/Kleinschreibung) erweitert werden: `"DHBW"` ≠ `"dhbw"`.
-
----
-
-### **2. Filter- und Sortierfunktionen**
-- **Filter nach Kategorie und Priorität**:
-  - Es fehlt eine Funktion, um Aufgaben in der Liste basierend auf einer Kategorie oder Priorität zu filtern.
-  - Beispielsweise: Zeige nur **"Hohe Priorität"** oder nur Aufgaben der Kategorie **"DHBW"**.
-
-- **Sortierung**:
-  - Aufgaben sollten sortiert werden können, z. B. nach Fälligkeitsdatum oder Priorität.
-
----
 
 ### **3. Erinnerungen**
 - Es fehlt die Implementierung einer **Erinnerungsfunktion**, die:
@@ -35,8 +17,6 @@ To Do
 ---
 
 ### **5. Benutzeroberfläche**
-- **Abbrechen-Button funktioniert nicht korrekt**:
-  - Im aktuellen Code fehlt die Initialisierung des `self.cancel_button`. Das wurde oben bereits korrigiert.
   
 - **Klarere Ansichten**:
   - Aufgabenansicht und Eingabemaske könnten deutlicher voneinander getrennt werden, z. B. durch Tabs oder Panels.
