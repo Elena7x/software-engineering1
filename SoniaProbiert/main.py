@@ -117,6 +117,11 @@ class StudyMasterPlanerUI:
         self.delete_button.pack(side=tk.LEFT, padx=10)
         self.delete_button.pack_forget()  # Standardmäßig ausblenden
 
+        # Button: Abbrechen
+        self.cancel_button = tk.Button(button_frame, text="Abbrechen", command=self.cancel_selection, width=18, height=1)
+        self.cancel_button.pack(side=tk.LEFT, padx=10)
+        self.cancel_button.pack_forget()  # Standardmäßig ausblenden
+
     def create_task_view(self, parent_frame):
         self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
         self.tree.heading("Name", text="Name")
@@ -173,7 +178,7 @@ class StudyMasterPlanerUI:
             self.save_button.pack_forget()
             self.delete_button.pack_forget()
             self.cancel_button.pack_forget()
-
+            
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
         messagebox.showinfo("Kalenderansicht", "Kalenderansicht wird hier angezeigt!")
@@ -255,6 +260,7 @@ class StudyMasterPlanerUI:
         self.save_button.pack_forget()
         self.delete_button.pack_forget()
         self.cancel_button.pack_forget()
+
 
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
