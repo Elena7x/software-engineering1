@@ -165,6 +165,10 @@ class StudyMasterPlanerUI:
         self.tree.pack(pady=10, fill="both", expand=True)
         self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
 
+        self.open_attachment_button = tk.Button(frame, text="Öffnen", command=self.open_attachment)
+        self.open_attachment_button.grid(row=4, column=4, padx=5, pady=5)
+
+
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
         tasks = self.planner.load_entries()
@@ -213,8 +217,13 @@ class StudyMasterPlanerUI:
             self.save_button.pack_forget()
             self.delete_button.pack_forget()
             self.cancel_button.pack_forget()
-
-            
+        # Anhänge korrekt laden
+        task = next((t for t in self.planner.load_entries() if t.name == name), None)
+        if task:
+            self.attachment_list.delete(0, tk.END)
+            for attachment in task.links:
+                self.attachment_list.insert(tk.END, attachment)
+                
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
         messagebox.showinfo("Kalenderansicht", "Kalenderansicht wird hier angezeigt!")
@@ -346,6 +355,21 @@ class StudyMasterPlanerUI:
         new_attachment = tk.simpledialog.askstring("Neuer Anhang", "Gib den Dateipfad oder Link ein:")
         if new_attachment:
             self.attachment_list.insert(tk.END, new_attachment)
+
+    def open_attachment(self):
+        """Öffnet den ausgewählten Anhang (Datei oder Link)."""
+        selected_index = self.attachment_list.curselection()
+        if selected_index:
+            attachment = self.attachment_list.get(selected_index)
+            if attachment.startswith("http://") or attachment.startswith("https://"):
+                import webbrowser
+                webbrowser.open(attachment)
+            else:
+                import os
+                if os.path.exists(attachment):
+                    os.startfile(attachment)
+                else:
+                    messagebox.showerror("Fehler", f"Datei '{attachment}' wurde nicht gefunden.")
 
     def remove_attachment(self):
         """Entfernt den ausgewählten Anhang aus der Liste."""

@@ -28,6 +28,7 @@ class Database:
         self.save_data()
 
 
+
     def remove_entry(self, name: str):
         """Entfernt eine Aufgabe aus der Datenbank."""
         if name in self.entries:
@@ -38,17 +39,18 @@ class Database:
 
     def get_all_entries(self):
         """Gibt alle Aufgaben als Liste von `Aufgabe`-Objekten zurück."""
-        from planner.models import Aufgabe
         return [
             Aufgabe(
                 name=data["name"],
                 deadline=datetime.strptime(data["deadline"], "%Y-%m-%d"),
                 priority=data["priority"],
                 category=data.get("category", "Allgemein"),  # Standardkategorie verwenden
-                text=data.get("text", "")
+                text=data.get("text", ""),
+                links=data.get("links", [])  # Anhänge laden
             ) for data in self.entries.values()
         ]
-        
+
+
     def check_name_exists(self, name: str) -> bool:
         """Prüft, ob eine Aufgabe mit dem Namen existiert."""
         return name in self.entries
