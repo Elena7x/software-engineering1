@@ -123,11 +123,32 @@ class StudyMasterPlanerUI:
         self.cancel_button.pack_forget()  # Standardmäßig ausblenden
 
     def create_task_view(self, parent_frame):
+        # Filterbereich
+        filter_frame = tk.Frame(parent_frame)
+        filter_frame.pack(pady=10, fill="x")
+
+        # Filter nach Kategorie
+        tk.Label(filter_frame, text="Filter Kategorie:").pack(side=tk.LEFT, padx=5)
+        self.filter_category = tk.StringVar()
+        self.filter_category.set("Alle")  # Standardwert
+        category_options = ["Alle"] + self.categories  # "Alle" hinzufügen
+        self.category_filter_menu = tk.OptionMenu(filter_frame, self.filter_category, *category_options, command=self.apply_filters)
+        self.category_filter_menu.pack(side=tk.LEFT, padx=5)
+
+        # Filter nach Priorität
+        tk.Label(filter_frame, text="Filter Priorität:").pack(side=tk.LEFT, padx=5)
+        self.filter_priority = tk.StringVar()
+        self.filter_priority.set("Alle")  # Standardwert
+        priority_options = ["Alle", "Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
+        self.priority_filter_menu = tk.OptionMenu(filter_frame, self.filter_priority, *priority_options, command=self.apply_filters)
+        self.priority_filter_menu.pack(side=tk.LEFT, padx=5)
+
+        # Aufgabenliste
         self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
         self.tree.heading("Name", text="Name")
         self.tree.heading("Deadline", text="Deadline")
         self.tree.heading("Priorität", text="Priorität")
-        self.tree.heading("category", text="category")
+        self.tree.heading("category", text="Kategorie")
 
         self.tree.column("Name", width=200)
         self.tree.column("Deadline", width=100)
@@ -141,6 +162,8 @@ class StudyMasterPlanerUI:
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
         tasks = self.planner.load_entries()
+        """Aktualisiert die Treeview mit den aktuellen Aufgaben und berücksichtigt die Filter."""
+        self.apply_filters()
 
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -261,6 +284,38 @@ class StudyMasterPlanerUI:
         self.save_button.pack_forget()
         self.delete_button.pack_forget()
         self.cancel_button.pack_forget()
+
+    def apply_filters(self, *args):
+        """Filtert die Aufgaben basierend auf den ausgewählten Kriterien."""
+        category_filter = self.filter_category.get()
+        priority_filter = self.filter_priority.get()
+
+        # Mapping für Prioritäten
+        priority_mapping = {
+            "Sehr Niedrig": 1,
+            "Niedrig": 2,
+            "Hoch": 3,
+            "Sehr Hoch": 4
+        }
+
+        # Aufgaben aus der Datenbank laden
+        tasks = self.planner.load_entries()
+
+        # Filter anwenden
+        if category_filter != "Alle":
+            tasks = [task for task in tasks if task.category == category_filter]
+        if priority_filter != "Alle":
+            priority_value = priority_mapping[priority_filter]
+            tasks = [task for task in tasks if task.priority == priority_value]
+
+        # Treeview aktualisieren
+        self.tree.delete(*self.tree.get_children())
+        for task in tasks:
+            priority_text = self.priority_display_mapping.get(task.priority, "Unbekannt")
+            self.tree.insert(
+                "", "end",
+                values=(task.name, task.deadline.strftime("%Y-%m-%d"), priority_text, task.category)
+            )
 
 
     def add_task(self):
