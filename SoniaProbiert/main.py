@@ -199,14 +199,15 @@ class StudyMasterPlanerUI:
         """Fügt eine neue Kategorie hinzu."""
         new_category = tk.simpledialog.askstring("Neue Kategorie", "Gib den Namen der neuen Kategorie ein:")
         if new_category:
-            if new_category not in self.categories:
-                self.categories.append(new_category)
+            # Prüfen, ob die Kategorie (unabhängig von Groß-/Kleinschreibung) existiert
+            if new_category.lower() not in [cat.lower() for cat in self.categories]:
+                self.categories.append(new_category)  # Kategorie in Originalschreibweise speichern
                 self.planner.database.categories = self.categories
                 self.planner.database.save_categories()
-                self.category_menu['menu'].add_command(label=new_category, command=tk._setit(self.selected_category, new_category))
+                self.refresh_category_menu()
                 messagebox.showinfo("Erfolg", f"Die Kategorie '{new_category}' wurde hinzugefügt!")
             else:
-                messagebox.showerror("Fehler", f"Die Kategorie '{new_category}' existiert bereits.")
+                messagebox.showerror("Fehler", f"Die Kategorie '{new_category}' existiert bereits (unabhängig von Groß-/Kleinschreibung).")
 
     def delete_category(self):
         """Löscht eine ausgewählte Kategorie."""
@@ -217,7 +218,7 @@ class StudyMasterPlanerUI:
                     self.categories.remove(selected_category)
                     self.planner.database.categories = self.categories
                     self.planner.database.save_categories()
-                    self.refresh_category_menu()
+                    self.refresh_category_menu()  # Aktualisiert das Dropdown-Menü direkt
                     messagebox.showinfo("Erfolg", f"Die Kategorie '{selected_category}' wurde gelöscht!")
                 else:
                     messagebox.showerror("Fehler", f"Die Kategorie '{selected_category}' kann nicht gelöscht werden.")
@@ -226,11 +227,11 @@ class StudyMasterPlanerUI:
 
     def refresh_category_menu(self):
         """Aktualisiert das Dropdown-Menü für Kategorien."""
-        self.category_menu['menu'].delete(0, 'end')  # Entferne alle existierenden Kategorien
+        self.category_menu['menu'].delete(0, 'end')  # Entfernt alle vorhandenen Kategorien
         for category in self.categories:
             self.category_menu['menu'].add_command(label=category, command=tk._setit(self.selected_category, category))
-        self.selected_category.set(self.categories[0])  # Setze die Standardkategorie
-    
+        self.selected_category.set(self.categories[0])  # Setzt die Standardkategorie
+
     def open_calendar_popup(self):
         """Öffnet ein Popup-Fenster mit einem Kalender zur Auswahl eines Datums."""
         calendar_window = tk.Toplevel(self.root)
