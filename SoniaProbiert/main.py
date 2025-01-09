@@ -240,6 +240,7 @@ class StudyMasterPlanerUI:
         self.task_input_frame.pack_forget()  # Versteckt den Bereich zum Hinzufügen von Aufgaben
         self.task_view_frame.pack(fill="both", expand=True)  # Zeigt die Aufgabenliste an
 
+
     def add_category(self):
         """Fügt eine neue Kategorie hinzu."""
         new_category = tk.simpledialog.askstring("Neue Kategorie", "Gib den Namen der neuen Kategorie ein:")
@@ -311,6 +312,7 @@ class StudyMasterPlanerUI:
         self.delete_button.pack_forget()
         self.cancel_button.pack_forget()
 
+
     def apply_filters(self, *args):
         """Filtert und sortiert die Aufgaben basierend auf den ausgewählten Kriterien."""
         category_filter = self.filter_category.get()
@@ -379,7 +381,6 @@ class StudyMasterPlanerUI:
         if selected_index:
             self.attachment_list.delete(selected_index)
 
-    
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
         try:
