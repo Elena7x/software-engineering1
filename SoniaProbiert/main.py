@@ -179,14 +179,6 @@ class StudyMasterPlanerUI:
         # Auswahl in der Treeview überwachen
         self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
 
-        # Frame für Anhänge-Buttons
-        attachment_button_frame = tk.Frame(parent_frame)
-        attachment_button_frame.pack(pady=5)
-
-        # Button zum Öffnen von Anhängen
-        self.open_attachment_button = tk.Button(attachment_button_frame, text="Öffnen", command=self.open_attachment)
-        self.open_attachment_button.pack(side=tk.LEFT, padx=5)
-
 
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
