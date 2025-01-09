@@ -12,7 +12,7 @@ from planner.core import StudyMasterPlaner
 class StudyMasterPlanerUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Study Master Planer")
+        self.root.title("Study Master")
         self.root.geometry("900x600")  # Fenstergröße setzen
         self.planner = StudyMasterPlaner()
 
