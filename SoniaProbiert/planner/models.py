@@ -1,14 +1,15 @@
 from datetime import datetime
 
 class Aufgabe:
-    def __init__(self, name: str, deadline: datetime, priority: int = 1, category: str = "Allgemein", text: str = ""):
+    def __init__(self, name, deadline, priority, category, text="", links=None, reminder=None):
         self.name = name
         self.deadline = deadline
         self.priority = priority
-        self.category = category  # Neue Kategorie
+        self.category = category
         self.text = text
-        self.links = []
-        self.reminder = None
+        self.links = links if links is not None else []  # Standardmäßig eine leere Liste
+        self.reminder = reminder
+
 
     def change_value(self, field: str, new_value):
         """Ändert den Wert eines Attributs der Aufgabe."""

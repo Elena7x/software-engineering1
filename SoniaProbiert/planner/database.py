@@ -22,12 +22,10 @@ class Database:
             "priority": entry.priority,
             "category": entry.category,
             "text": entry.text,
-            "links": entry.links,  # Speichern der Anhänge
+            "links": entry.links,  # Anhänge speichern
             "reminder": entry.reminder.time.strftime("%Y-%m-%d %H:%M:%S") if entry.reminder else None
         }
         self.save_data()
-
-
 
     def remove_entry(self, name: str):
         """Entfernt eine Aufgabe aus der Datenbank."""
@@ -44,11 +42,12 @@ class Database:
                 name=data["name"],
                 deadline=datetime.strptime(data["deadline"], "%Y-%m-%d"),
                 priority=data["priority"],
-                category=data.get("category", "Allgemein"),  # Standardkategorie verwenden
+                category=data.get("category", "Allgemein"),
                 text=data.get("text", ""),
-                links=data.get("links", [])  # Anhänge laden
+                links=data.get("links", [])  # Lade Anhänge
             ) for data in self.entries.values()
         ]
+
 
 
     def check_name_exists(self, name: str) -> bool:
