@@ -20,12 +20,13 @@ class Database:
             "name": entry.name,
             "deadline": entry.deadline.strftime("%Y-%m-%d"),
             "priority": entry.priority,
-            "category": entry.category,  # Kategorie speichern
+            "category": entry.category,
             "text": entry.text,
-            "links": entry.links,
+            "links": entry.links,  # Speichern der Anhänge
             "reminder": entry.reminder.time.strftime("%Y-%m-%d %H:%M:%S") if entry.reminder else None
         }
         self.save_data()
+
 
     def remove_entry(self, name: str):
         """Entfernt eine Aufgabe aus der Datenbank."""
