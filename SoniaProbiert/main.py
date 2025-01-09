@@ -122,51 +122,37 @@ class StudyMasterPlanerUI:
 
 
     def create_task_view(self, parent_frame):
-        # Filter- und Sortierbereich
+        # Erstellen Sie den Filter- und Sortierbereich
         filter_sort_frame = tk.Frame(parent_frame)
         filter_sort_frame.pack(pady=10, fill="x")
 
-        # Filter nach Kategorie
+        # Aufgaben-Ansicht
+        task_view_frame = tk.Frame(parent_frame)
+        task_view_frame.pack(pady=10, fill="x")
+
+        # Filter und Sortieren (optional, falls benötigt)
         tk.Label(filter_sort_frame, text="Filter Kategorie:").pack(side=tk.LEFT, padx=5)
-        self.filter_category = tk.StringVar()
-        self.filter_category.set("Alle")  # Standardwert
-        category_options = ["Alle"] + self.categories
-        self.category_filter_menu = tk.OptionMenu(filter_sort_frame, self.filter_category, *category_options, command=self.apply_filters)
-        self.category_filter_menu.pack(side=tk.LEFT, padx=5)
 
-        # Filter nach Priorität
-        tk.Label(filter_sort_frame, text="Filter Priorität:").pack(side=tk.LEFT, padx=5)
-        self.filter_priority = tk.StringVar()
-        self.filter_priority.set("Alle")  # Standardwert
-        priority_options = ["Alle", "Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
-        self.priority_filter_menu = tk.OptionMenu(filter_sort_frame, self.filter_priority, *priority_options, command=self.apply_filters)
-        self.priority_filter_menu.pack(side=tk.LEFT, padx=5)
-
-        # Sortierung
-        tk.Label(filter_sort_frame, text="Sortieren nach:").pack(side=tk.LEFT, padx=5)
-        self.sort_option = tk.StringVar()
-        self.sort_option.set("Fälligkeitsdatum")  # Standardwert
-        sort_options = ["Fälligkeitsdatum", "Priorität", "Name"]
-        self.sort_menu = tk.OptionMenu(filter_sort_frame, self.sort_option, *sort_options, command=self.apply_filters)
-        self.sort_menu.pack(side=tk.LEFT, padx=5)
-
-        # Aufgabenliste
-        self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
+        # Treeview für die Aufgabenliste
+        self.tree = Treeview(task_view_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
         self.tree.heading("Name", text="Name")
         self.tree.heading("Deadline", text="Deadline")
         self.tree.heading("Priorität", text="Priorität")
         self.tree.heading("category", text="Kategorie")
-
         self.tree.column("Name", width=200)
         self.tree.column("Deadline", width=100)
         self.tree.column("Priorität", width=80)
         self.tree.column("category", width=100)
-
         self.tree.pack(pady=10, fill="both", expand=True)
         self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
 
-        self.open_attachment_button = tk.Button(frame, text="Öffnen", command=self.open_attachment)
-        self.open_attachment_button.grid(row=4, column=4, padx=5, pady=5)
+        # Button-Bereich für Anhänge
+        attachment_button_frame = tk.Frame(task_view_frame)
+        attachment_button_frame.pack(pady=5)
+
+        # Öffnen-Button hinzufügen
+        self.open_attachment_button = tk.Button(attachment_button_frame, text="Öffnen", command=self.open_attachment)
+        self.open_attachment_button.pack(side=tk.LEFT, padx=5)
 
 
     def refresh_task_view(self):
