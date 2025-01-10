@@ -3,7 +3,6 @@ from typing import List
 from planner.database import Database
 from planner.models import Aufgabe, Reminder
 
-
 class Aufgabe:
     def __init__(self, name: str, deadline: datetime, priority: int = 1, category: str = "", text: str = ""):
         self.name = name
@@ -11,7 +10,6 @@ class Aufgabe:
         self.priority = priority
         self.category = category
         self.text = text
-        self.links = []
         self.reminder = None
 
     def change_value(self, field: str, new_value):
@@ -28,7 +26,6 @@ class Aufgabe:
     def __repr__(self):
         return f"<Aufgabe(name={self.name}, deadline={self.deadline}, priority={self.priority}, category={self.category})>"
 
-
 class Reminder:
     def __init__(self, name: str, time: datetime):
         self.name = name
@@ -40,7 +37,6 @@ class Reminder:
 
     def __repr__(self):
         return f"<Reminder(name={self.name}, time={self.time})>"
-
 
 class StudyMasterPlaner:
     def __init__(self):
@@ -87,7 +83,7 @@ class StudyMasterPlaner:
         return [
             entry for entry in self.entries.values()
             if (priority is None or entry.priority == priority) and
-               (category is None or entry. category == category)
+               (category is None or entry.category == category)
         ]
 
     def __repr__(self):

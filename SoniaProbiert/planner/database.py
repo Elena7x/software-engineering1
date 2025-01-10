@@ -2,9 +2,6 @@ import json
 from datetime import datetime
 from planner.models import Aufgabe
 
-
-
-
 class Database:
     def __init__(self, file_path="tasks.json", categories_path="categories.json"):
         self.file_path = file_path
@@ -22,12 +19,9 @@ class Database:
             "priority": entry.priority,
             "category": entry.category,
             "text": entry.text,
-            "links": entry.links,  # Speichern der Anhänge
             "reminder": entry.reminder.time.strftime("%Y-%m-%d %H:%M:%S") if entry.reminder else None
         }
         self.save_data()
-
-
 
     def remove_entry(self, name: str):
         """Entfernt eine Aufgabe aus der Datenbank."""
@@ -44,12 +38,10 @@ class Database:
                 name=data["name"],
                 deadline=datetime.strptime(data["deadline"], "%Y-%m-%d"),
                 priority=data["priority"],
-                category=data.get("category", "Allgemein"),  # Standardkategorie verwenden
-                text=data.get("text", ""),
-                links=data.get("links", [])  # Anhänge laden
+                category=data.get("category", "Allgemein"),
+                text=data.get("text", "")
             ) for data in self.entries.values()
         ]
-
 
     def check_name_exists(self, name: str) -> bool:
         """Prüft, ob eine Aufgabe mit dem Namen existiert."""
