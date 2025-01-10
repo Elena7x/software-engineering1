@@ -196,31 +196,38 @@ class StudyMasterPlanerUI:
             )
 
     def on_treeview_select(self, event):
-        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder und zeigt die passenden Buttons an."""
+        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder und passt die Button-Sichtbarkeit an."""
         selected_item = self.tree.selection()
         if selected_item:
-            # Zeige die Buttons "Speichern", "Löschen" und "Abbrechen"
+            # Wenn eine Aufgabe ausgewählt ist, zeige Speichern-, Löschen- und Abbrechen-Button
             self.add_button.pack_forget()
             self.save_button.pack(side=tk.LEFT, padx=10)
             self.delete_button.pack(side=tk.LEFT, padx=10)
             self.cancel_button.pack(side=tk.LEFT, padx=10)
 
-            # Lade die Werte aus der Treeview in die Eingabefelder
+            # Hole die Werte aus der Treeview
             item = self.tree.item(selected_item[0], "values")
             name, deadline, priority_text, category = item
 
+            # Eingabefelder füllen
             self.name_entry.delete(0, tk.END)
             self.name_entry.insert(0, name)
             self.deadline_label.config(text=deadline)
             self.selected_priority.set(priority_text)
             self.selected_category.set(category)
 
-            # Lade Anhänge aus der Datenbank
+            # Anhänge aus der Datenbank laden
             task = next((t for t in self.planner.load_entries() if t.name == name), None)
             if task:
                 self.attachment_list.delete(0, tk.END)
                 for attachment in task.links:
                     self.attachment_list.insert(tk.END, attachment)
+        else:
+            # Wenn keine Aufgabe ausgewählt ist, zeige nur den "Aufgabe Hinzufügen"-Button
+            self.add_button.pack(side=tk.LEFT, padx=10)
+            self.save_button.pack_forget()
+            self.delete_button.pack_forget()
+            self.cancel_button.pack_forget()
 
     def show_calendar_view(self):
         # Dummy-Methode für Kalenderansicht (kann angepasst werden)
@@ -233,12 +240,10 @@ class StudyMasterPlanerUI:
     def show_task_input(self):
         """Zeigt den Bereich 'Aufgaben Hinzufügen' an."""
         self.task_input_frame.pack(fill="both", expand=True)  # Zeigt den Bereich zum Hinzufügen von Aufgaben an
-        self.task_view_frame.pack_forget()  # Versteckt die Aufgabenliste
 
     def hide_task_input(self):
         """Blendet den Bereich 'Aufgaben Hinzufügen' aus."""
         self.task_input_frame.pack_forget()  # Versteckt den Bereich zum Hinzufügen von Aufgaben
-        self.task_view_frame.pack(fill="both", expand=True)  # Zeigt die Aufgabenliste an
 
     def add_category(self):
         """Fügt eine neue Kategorie hinzu."""
@@ -295,11 +300,8 @@ class StudyMasterPlanerUI:
         
     def cancel_selection(self):
         """Hebt die Auswahl in der Treeview auf und zeigt den 'Aufgabe Hinzufügen'-Modus."""
-        # Auswahl in der Treeview entfernen
-        self.tree.selection_remove(self.tree.selection())
-        
-        # Eingabefelder leeren
-        self.name_entry.delete(0, tk.END)
+        self.tree.selection_remove(self.tree.selection())  # Auswahl in der Treeview entfernen
+        self.name_entry.delete(0, tk.END)  # Eingabefelder leeren
         self.deadline_label.config(text="Kein Datum ausgewählt")
         self.selected_priority.set(self.priority_values[1])  # Priorität zurücksetzen
         self.selected_category.set(self.categories[0])  # Kategorie zurücksetzen
@@ -310,6 +312,8 @@ class StudyMasterPlanerUI:
         self.save_button.pack_forget()
         self.delete_button.pack_forget()
         self.cancel_button.pack_forget()
+
+
 
     def apply_filters(self, *args):
         """Filtert und sortiert die Aufgaben basierend auf den ausgewählten Kriterien."""
@@ -383,21 +387,30 @@ class StudyMasterPlanerUI:
     def add_task(self):
         """Fügt eine neue Aufgabe hinzu und aktualisiert die Anzeige."""
         try:
+            # Eingaben aus den Feldern lesen
             name = self.name_entry.get()
             deadline_text = self.deadline_label.cget("text")
             if deadline_text == "Kein Datum ausgewählt":
                 raise ValueError("Bitte wählen Sie ein Datum aus.")
             deadline = datetime.strptime(deadline_text, "%Y-%m-%d")
+
             priority_text = self.selected_priority.get()
-            priority_mapping = {"Sehr Niedrig": 1, "Niedrig": 2, "Hoch": 3, "Sehr Hoch": 4}
+            priority_mapping = {
+                "Sehr Niedrig": 1,
+                "Niedrig": 2,
+                "Hoch": 3,
+                "Sehr Hoch": 4
+            }
             priority = priority_mapping[priority_text]
             category = self.selected_category.get()
+
+            # Anhänge sammeln
             attachments = list(self.attachment_list.get(0, tk.END))
 
             # Aufgabe erstellen
             self.planner.create_entry(name, deadline, priority, category, text="", links=attachments)
 
-            # Treeview aktualisieren
+            # Aktualisiere die Treeview
             self.refresh_task_view()
 
             # Eingabefelder leeren
@@ -409,6 +422,7 @@ class StudyMasterPlanerUI:
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
 
+    
     def update_task(self):
         """Speichert die geänderten Daten der ausgewählten Aufgabe."""
         try:
