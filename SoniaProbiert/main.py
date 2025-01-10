@@ -316,6 +316,10 @@ class StudyMasterPlanerUI:
             messagebox.showinfo("Erfolg", "Aufgabe erfolgreich aktualisiert!")
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
+        finally:
+            # Nach Aktualisierung die Felder zurücksetzen
+            self.cancel_selection()
+
 
     def delete_task(self):
         try:

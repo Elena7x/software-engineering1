@@ -1,8 +1,8 @@
 {
-    "sb": {
-        "name": "sb",
+    "Lernen": {
+        "name": "Lernen",
         "deadline": "2025-01-22",
-        "priority": 2,
+        "priority": 4,
         "category": "DHBW",
         "text": "",
         "reminder": null
