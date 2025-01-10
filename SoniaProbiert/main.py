@@ -4,7 +4,7 @@ from tkinter.ttk import Treeview
 from tkinter import simpledialog
 from datetime import datetime
 from tkcalendar import Calendar
-import sys   
+import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from planner.core import StudyMasterPlaner
