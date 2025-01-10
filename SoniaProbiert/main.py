@@ -114,8 +114,7 @@ class StudyMasterPlanerUI:
 
 
     def create_task_view(self, parent_frame):
-        """Erstellt die Aufgabenansicht mit Filter-, Sortier- und Anhangsoptionen."""
-        # Frame für Filter- und Sortieroptionen
+        # Filter- und Sortierbereich
         filter_sort_frame = tk.Frame(parent_frame)
         filter_sort_frame.pack(pady=10, fill="x")
 
@@ -143,25 +142,29 @@ class StudyMasterPlanerUI:
         self.sort_menu = tk.OptionMenu(filter_sort_frame, self.sort_option, *sort_options, command=self.apply_filters)
         self.sort_menu.pack(side=tk.LEFT, padx=5)
 
-        # Frame für die Aufgabenliste
-        task_view_frame = tk.Frame(parent_frame)
-        task_view_frame.pack(pady=10, fill="both", expand=True)
-
-        # Treeview für die Aufgabenliste
-        self.tree = Treeview(task_view_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
+        # Aufgabenliste
+        self.tree = Treeview(parent_frame, columns=("Name", "Deadline", "Priorität", "category"), show="headings")
         self.tree.heading("Name", text="Name")
         self.tree.heading("Deadline", text="Deadline")
         self.tree.heading("Priorität", text="Priorität")
         self.tree.heading("category", text="Kategorie")
+
         self.tree.column("Name", width=200)
         self.tree.column("Deadline", width=100)
         self.tree.column("Priorität", width=80)
         self.tree.column("category", width=100)
-        self.tree.pack(pady=10, fill="both", expand=True)
 
-        # Auswahl in der Treeview überwachen
+        self.tree.pack(pady=10, fill="both", expand=True)
         self.tree.bind("<<TreeviewSelect>>", self.on_treeview_select)
 
+        
+        # Button-Bereich für Anhänge
+        attachment_button_frame = tk.Frame(task_view_frame)
+        attachment_button_frame.pack(pady=5)
+
+        # Öffnen-Button hinzufügen
+        self.open_attachment_button = tk.Button(attachment_button_frame, text="Öffnen", command=self.open_attachment)
+        self.open_attachment_button.pack(side=tk.LEFT, padx=5)
 
     def refresh_task_view(self):
         """Aktualisiert die Treeview mit den aktuellen Aufgaben."""
