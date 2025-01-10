@@ -63,54 +63,71 @@ class StudyMasterPlanerUI:
         view_menu.add_command(label="Listenansicht", command=self.hide_task_input)
 
     def create_task_input_section(self, parent_frame):
-        self.task_input_frame = tk.Frame(parent_frame)
-        # Das Menü ist standardmäßig ausgeblendet
-        self.task_input_frame.pack_forget()
+        frame = tk.Frame(parent_frame)
+        frame.pack(pady=20, padx=10, fill="x")
 
         # Eingabefelder für neue Aufgaben
-        tk.Label(self.task_input_frame, text="Name:").grid(row=0, column=0, padx=5, pady=5)
-        self.name_entry = tk.Entry(self.task_input_frame)
+        tk.Label(frame, text="Name:").grid(row=0, column=0, padx=5, pady=5)
+        self.name_entry = tk.Entry(frame)
         self.name_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        tk.Label(self.task_input_frame, text="Deadline:").grid(row=1, column=0, padx=5, pady=5)
-        self.deadline_label = tk.Label(self.task_input_frame, text="Kein Datum ausgewählt", bg="white", relief="sunken", width=20)
+        tk.Label(frame, text="Deadline:").grid(row=1, column=0, padx=5, pady=5)
+        self.deadline_label = tk.Label(frame, text="Kein Datum ausgewählt", bg="white", relief="sunken", width=20)
         self.deadline_label.grid(row=1, column=1, padx=5, pady=5)
-        self.deadline_button = tk.Button(self.task_input_frame, text="Datum auswählen", command=self.open_calendar_popup)
+
+        self.deadline_button = tk.Button(frame, text="Datum auswählen", command=self.open_calendar_popup)
         self.deadline_button.grid(row=1, column=2, padx=5, pady=5)
 
-        tk.Label(self.task_input_frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
+        tk.Label(frame, text="Priorität:").grid(row=2, column=0, padx=5, pady=5)
         self.priority_values = ["Sehr Niedrig", "Niedrig", "Hoch", "Sehr Hoch"]
         self.selected_priority = tk.StringVar()
         self.selected_priority.set(self.priority_values[1])  # Standardwert: "Niedrig"
-        self.priority_menu = tk.OptionMenu(self.task_input_frame, self.selected_priority, *self.priority_values)
+        self.priority_menu = tk.OptionMenu(frame, self.selected_priority, *self.priority_values)
         self.priority_menu.grid(row=2, column=1, padx=5, pady=5)
 
-        tk.Label(self.task_input_frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
+        tk.Label(frame, text="Kategorie:").grid(row=3, column=0, padx=5, pady=5)
         self.selected_category = tk.StringVar()
         self.selected_category.set(self.categories[0])  # Standardkategorie
-        self.category_menu = tk.OptionMenu(self.task_input_frame, self.selected_category, *self.categories)
-        self.category_menu.grid(row=3, column=1, padx=5, pady=5)
+        self.category_menu = tk.OptionMenu(frame, self.selected_category, *self.categories)
+        self.category_menu.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 
-        tk.Label(self.task_input_frame, text="Anhänge:").grid(row=4, column=0, padx=5, pady=5)
-        self.attachment_list = tk.Listbox(self.task_input_frame, height=4, width=40)
+        # Dateianhänge
+        tk.Label(frame, text="Anhänge:").grid(row=4, column=0, padx=5, pady=5)
+        self.attachment_list = tk.Listbox(frame, height=4, width=40)
         self.attachment_list.grid(row=4, column=1, padx=5, pady=5)
-        self.add_attachment_button = tk.Button(self.task_input_frame, text="Datei/Link hinzufügen", command=self.add_attachment)
+
+        # Buttons für Anhänge
+        self.add_attachment_button = tk.Button(frame, text="Datei/Link hinzufügen", command=self.add_attachment)
         self.add_attachment_button.grid(row=4, column=2, padx=5, pady=5)
-        self.remove_attachment_button = tk.Button(self.task_input_frame, text="Entfernen", command=self.remove_attachment)
+
+        self.remove_attachment_button = tk.Button(frame, text="Entfernen", command=self.remove_attachment)
         self.remove_attachment_button.grid(row=4, column=3, padx=5, pady=5)
-        self.open_attachment_button = tk.Button(self.task_input_frame, text="Öffnen", command=self.open_attachment)
+
+        self.open_attachment_button = tk.Button(frame, text="Öffnen", command=self.open_attachment)
         self.open_attachment_button.grid(row=4, column=4, padx=5, pady=5)
 
         # Buttons unten
-        button_frame = tk.Frame(self.task_input_frame)
+        button_frame = tk.Frame(frame)
         button_frame.grid(row=5, column=0, columnspan=4, pady=10)
 
+        # Button: Aufgabe hinzufügen
+        self.add_button = tk.Button(button_frame, text="Aufgabe hinzufügen", command=self.add_task, width=18, height=1)
+        self.add_button.pack(side=tk.LEFT, padx=10)
+
+        # Button: Änderungen speichern
         self.save_button = tk.Button(button_frame, text="Änderungen speichern", command=self.update_task, width=18, height=1)
         self.save_button.pack(side=tk.LEFT, padx=10)
+        self.save_button.pack_forget()  # Standardmäßig ausblenden
+
+        # Button: Aufgabe löschen
         self.delete_button = tk.Button(button_frame, text="Aufgabe löschen", command=self.delete_task, width=18, height=1)
         self.delete_button.pack(side=tk.LEFT, padx=10)
+        self.delete_button.pack_forget()  # Standardmäßig ausblenden
+
+        # Button: Abbrechen
         self.cancel_button = tk.Button(button_frame, text="Abbrechen", command=self.cancel_selection, width=18, height=1)
         self.cancel_button.pack(side=tk.LEFT, padx=10)
+        self.cancel_button.pack_forget()  # Standardmäßig ausblenden
 
 
     def create_task_view(self, parent_frame):
@@ -179,11 +196,14 @@ class StudyMasterPlanerUI:
             )
 
     def on_treeview_select(self, event):
-        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder und zeigt das Menü an."""
+        """Lädt die ausgewählten Aufgaben-Daten in die Eingabefelder und zeigt die passenden Buttons an."""
         selected_item = self.tree.selection()
         if selected_item:
-            # Zeige das Eingabemenü
-            self.task_input_frame.pack(pady=10, padx=10, fill="x")
+            # Zeige die Buttons "Speichern", "Löschen" und "Abbrechen"
+            self.add_button.pack_forget()
+            self.save_button.pack(side=tk.LEFT, padx=10)
+            self.delete_button.pack(side=tk.LEFT, padx=10)
+            self.cancel_button.pack(side=tk.LEFT, padx=10)
 
             # Lade die Werte aus der Treeview in die Eingabefelder
             item = self.tree.item(selected_item[0], "values")
@@ -275,12 +295,23 @@ class StudyMasterPlanerUI:
         select_button.pack(pady=10)
         
     def cancel_selection(self):
-        """Hebt die Auswahl in der Treeview auf und versteckt das Menü."""
+        """Hebt die Auswahl in der Treeview auf und zeigt den 'Aufgabe Hinzufügen'-Modus."""
         # Auswahl in der Treeview entfernen
         self.tree.selection_remove(self.tree.selection())
+        
+        # Eingabefelder leeren
+        self.name_entry.delete(0, tk.END)
+        self.deadline_label.config(text="Kein Datum ausgewählt")
+        self.selected_priority.set(self.priority_values[1])  # Priorität zurücksetzen
+        self.selected_category.set(self.categories[0])  # Kategorie zurücksetzen
+        self.attachment_list.delete(0, tk.END)  # Anhänge zurücksetzen
 
-        # Eingabemenü verstecken
-        self.task_input_frame.pack_forget()
+        # Buttons aktualisieren
+        self.add_button.pack(side=tk.LEFT, padx=10)
+        self.save_button.pack_forget()
+        self.delete_button.pack_forget()
+        self.cancel_button.pack_forget()
+
 
     def apply_filters(self, *args):
         """Filtert und sortiert die Aufgaben basierend auf den ausgewählten Kriterien."""
