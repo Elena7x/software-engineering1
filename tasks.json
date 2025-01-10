@@ -6,5 +6,13 @@
         "category": "DHBW",
         "text": "",
         "reminder": null
+    },
+    "Test": {
+        "name": "Test",
+        "deadline": "2025-01-30",
+        "priority": 2,
+        "category": "Pers\u00f6nlich",
+        "text": "",
+        "reminder": null
     }
 }
