@@ -95,16 +95,10 @@ class StudyMasterPlanerUI:
         tk.Label(frame, text="Anhänge:").grid(row=4, column=0, padx=5, pady=5)
         self.attachment_list = tk.Listbox(frame, height=4, width=40)
         self.attachment_list.grid(row=4, column=1, padx=5, pady=5)
-
-        # Buttons für Anhänge
         self.add_attachment_button = tk.Button(frame, text="Datei/Link hinzufügen", command=self.add_attachment)
         self.add_attachment_button.grid(row=4, column=2, padx=5, pady=5)
-
         self.remove_attachment_button = tk.Button(frame, text="Entfernen", command=self.remove_attachment)
         self.remove_attachment_button.grid(row=4, column=3, padx=5, pady=5)
-
-        self.open_attachment_button = tk.Button(frame, text="Öffnen", command=self.open_attachment)
-        self.open_attachment_button.grid(row=4, column=4, padx=5, pady=5)
 
         # Buttons unten
         button_frame = tk.Frame(frame)
