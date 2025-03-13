@@ -22,7 +22,7 @@ class StudyMasterPlannerView:
         btn_tasks.place(relx=0.5, rely=0.1, relwidth=0.5, anchor="center")  # 30% der Breite, zentriert
 
         # Kalender-Button (nimmt 30% der Breite ein, zentriert)
-        btn_calendar = tk.Button(button_frame, text="Kalender anzeigen", command=lambda: print("Kalender-Button geklickt!"))
+        btn_calendar = tk.Button(button_frame, text="Kalender anzeigen", command=self.show_calendar)
         btn_calendar.place(relx=0.5, rely=0.2, relwidth=0.5, anchor="center")  # 30% der Breite, zentriert
 
         btn_list = tk.Button(button_frame, text="Liste anzeigen",command=lambda: print("Liste-Button geklickt!"))
@@ -33,12 +33,17 @@ class StudyMasterPlannerView:
         self.root.withdraw()  # Hauptfenster verstecken
         Task(self.root)  # Erstellt das Fenster
 
+    def show_calendar(self):
+        self.root.withdraw()  # Hauptfenster verstecken
+        CalendarView(self.root)  # Erstellt das Fenster
+
+
 class Task:
     def __init__(self, parent):
         """ Erstellt eine Eingabemaske für neue Aufgaben """
-        self.top = tk.Toplevel(parent)  # Neues Fenster (Modal)
+        self.top = tk.Toplevel(parent)  # Neues Fenster Eingabemaske
         self.top.title("Neue Aufgabe hinzufügen")
-        self.parent = parent
+        self.parent = parent #Hauptfenster
         self.top.geometry("500x400")
         # Label und Eingabefeld für Aufgabenname
         tk.Label(self.top, text="Aufgabe:").pack(pady=5)
@@ -66,6 +71,30 @@ class Task:
         """ Zeigt das Hauptfenster wieder an und schließt die Eingabemaske """
         self.parent.deiconify()  # Hauptfenster wieder sichtbar machen
         self.top.destroy()  # Eingabemaske schließen
+
+class CalendarView:
+    def __init__(self, parent):
+        """ Erstellt eine Eingabemaske für neue Aufgaben """
+        self.top = tk.Toplevel(parent)  # Neues Fenster Eingabemaske
+        self.top.title("Kalender")
+        self.parent = parent  # Hauptfenster
+        self.top.geometry("500x400")
+
+        button_frame = tk.Frame(self.top)
+        button_frame.pack(pady=10)
+
+        # Event für das rote X (WM_DELETE_WINDOW) registrieren
+        self.top.protocol("WM_DELETE_WINDOW", self.go_back)
+
+        btn_go_back = tk.Button(button_frame, text="Go Back", command=self.go_back)
+        btn_go_back.pack(side=tk.RIGHT, padx=10)
+
+    def go_back(self):
+        """ Zeigt das Hauptfenster wieder an und schließt die Eingabemaske """
+        self.parent.deiconify()  # Hauptfenster wieder sichtbar machen
+        self.top.destroy()  # Eingabemaske schließen
+
+
 ''' def create_task_input_section(self, parent_frame):
         self.task_input_frame = tk.Frame(parent_frame, bd=2, relief=tk.SUNKEN, padx=10, pady=10)
         self.task_input_frame.pack(fill=tk.X, padx=5, pady=5)
@@ -127,12 +156,7 @@ class Task:
         self.tree.selection_remove(self.tree.selection())'''
 
 
-'''class CalendarView:
-    def __init__(self, ui, controller):
-
-    def draw_calendar(self):
-
-    def show_only_selected(self):
+'''
 
 class ListView:
     def __init__(self, ui, controller):
