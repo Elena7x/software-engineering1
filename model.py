@@ -1,6 +1,8 @@
 class Task:
     def __init__(self, name, deadline):
 
+
+
 class StudyMasterPlaner:
     def __init__(self):
 
