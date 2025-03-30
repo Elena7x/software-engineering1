@@ -23,7 +23,9 @@ class AppController:
 
     def remove_task(self, name, view="list"):
         self.model.delete_entry(name)
+        self.model.save_to_json() 
         self.view.update_list(view)
+
 
     def edit_task(self, old_name, new_name=None, new_deadline=None, view="list"):
         success = self.model.edit_entries(old_name, new_name, new_deadline)
