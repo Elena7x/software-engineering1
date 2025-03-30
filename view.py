@@ -29,7 +29,7 @@ class StudyMasterPlannerView:
         btn_calendar = tk.Button(button_frame, text="Kalender anzeigen", command=self.show_calendar)
         btn_calendar.place(relx=0.5, rely=0.2, relwidth=0.5, anchor="center")  # 30% der Breite, zentriert
 
-        btn_list = tk.Button(button_frame, text="Liste anzeigen",command=lambda: print("Liste-Button geklickt!"))
+        btn_list = tk.Button(button_frame, text="Liste anzeigen", command=self.show_list_view)
         btn_list.place(relx=0.5, rely=0.3, relwidth=0.5, anchor="center")
 
     def show_task_input(self):
@@ -40,7 +40,9 @@ class StudyMasterPlannerView:
     def show_calendar(self):
         self.root.withdraw()  # Hauptfenster verstecken
         CalendarView(self.root, self.controller)
-
+        
+    def show_list_view(self):
+        ListView(self.root, self.controller)
 
 class Task:
     def __init__(self, parent):
@@ -233,6 +235,68 @@ class DayTaskList:
 
             # neues Kalenderfenster öffnen
             CalendarView(self.controller.view.root, self.controller)
+
+        tk.Button(win, text="Speichern", command=save_changes).pack(pady=10)
+
+class ListView:
+    def __init__(self, parent, controller):
+        self.controller = controller
+        self.top = tk.Toplevel(parent)
+        self.top.title("Alle Aufgaben")
+        self.top.geometry("500x400")
+
+        tk.Label(self.top, text="Aufgabenübersicht", font=("Arial", 14, "bold")).pack(pady=10)
+
+        self.list_frame = tk.Frame(self.top)
+        self.list_frame.pack(fill=tk.BOTH, expand=True)
+
+        self.draw_list()
+
+        btn_close = tk.Button(self.top, text="Schließen", command=self.top.destroy)
+        btn_close.pack(pady=10)
+
+    def draw_list(self):
+        for widget in self.list_frame.winfo_children():
+            widget.destroy()
+
+        for task in self.controller.model.tasks:
+            frame = tk.Frame(self.list_frame, bd=1, relief=tk.RIDGE)
+            frame.pack(fill=tk.X, padx=10, pady=5)
+
+            lbl_text = (
+                f"📌 {task.name}  |  "
+                f"📅 {task.deadline}  |  "
+                f"⭐ Priorität: {task.priority}  |  "
+                f"📁 Kategorie: {task.category}"
+            )
+
+            tk.Label(frame, text=lbl_text, anchor="w").pack(side=tk.LEFT, padx=5, pady=5)
+
+            btn_edit = tk.Button(frame, text="Bearbeiten", command=lambda t=task: self.open_edit_window(t))
+            btn_edit.pack(side=tk.RIGHT, padx=5)
+
+    def open_edit_window(self, task):
+        win = tk.Toplevel(self.top)
+        win.title("Aufgabe bearbeiten")
+        win.geometry("400x250")
+
+        tk.Label(win, text="Titel:").pack(pady=5)
+        entry_title = tk.Entry(win, width=40)
+        entry_title.insert(0, task.name)
+        entry_title.pack(pady=5)
+
+        tk.Label(win, text="Deadline (YYYY-MM-DD):").pack(pady=5)
+        entry_deadline = tk.Entry(win, width=40)
+        entry_deadline.insert(0, task.deadline)
+        entry_deadline.pack(pady=5)
+
+        def save_changes():
+            new_name = entry_title.get()
+            new_deadline = entry_deadline.get()
+            self.controller.model.edit_entries(task.name, new_name, new_deadline)
+            self.controller.model.save_to_json()
+            self.draw_list()
+            win.destroy()
 
         tk.Button(win, text="Speichern", command=save_changes).pack(pady=10)
 

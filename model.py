@@ -3,12 +3,14 @@ class Task:
     """
     eine einzelne Aufgabe 
     """
-    def __init__(self, name, deadline):
+    def __init__(self, name, deadline, priority=1, category="Unbekannt"):
         self.name = name
         self.deadline = deadline
+        self.priority = priority
+        self.category = category
 
     def __str__(self):
-        return f"Task(name='{self.name}', deadline='{self.deadline}')"
+        return f"Task(name='{self.name}', deadline='{self.deadline}', priority={self.priority}, category='{self.category}')"
 
 
 class StudyMasterPlaner:
@@ -74,8 +76,11 @@ class StudyMasterPlaner:
                 for task_data in data.values():
                     name = task_data.get("name")
                     deadline = task_data.get("deadline")
+                    priority = task_data.get("priority", 1)
+                    category = task_data.get("category", "Unbekannt")
+
                     if name and deadline:
-                        self.tasks.append(Task(name, deadline))
+                        self.tasks.append(Task(name, deadline, priority, category))
         except Exception as e:
             print(f"[Fehler beim Laden]: {e}")
             
