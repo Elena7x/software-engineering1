@@ -1,3 +1,4 @@
+import json
 class Task:
     """
     eine einzelne Aufgabe 
@@ -17,6 +18,7 @@ class StudyMasterPlaner:
     def __init__(self):
         # Liste aller Tasks
         self.tasks = []
+        self.load_from_json("tasks.json")  # automatisch laden
 
     def create_entry(self, name, deadline):
         """
@@ -64,4 +66,31 @@ class StudyMasterPlaner:
             if task.name == name:
                 return task
         return None
+    
+    def load_from_json(self, filename):
+        try:
+            with open(filename, "r") as f:
+                data = json.load(f)
+                for task_data in data.values():
+                    name = task_data.get("name")
+                    deadline = task_data.get("deadline")
+                    if name and deadline:
+                        self.tasks.append(Task(name, deadline))
+        except Exception as e:
+            print(f"[Fehler beim Laden]: {e}")
+            
+    def save_to_json(self, filename="tasks.json"):
+        data = {}
+        for task in self.tasks:
+            data[task.name] = {
+                "name": task.name,
+                "deadline": task.deadline,
+                "priority": 1,
+                "category": "Unbekannt",
+                "text": "",
+                "reminder": None
+            }
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+
 

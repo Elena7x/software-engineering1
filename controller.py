@@ -1,12 +1,13 @@
 from model import StudyMasterPlaner
-from view import CalendarView
+from view import StudyMasterPlannerView  # Wichtig: nicht CalendarView direkt importieren!
 
 class AppController:
     def __init__(self, root):
         self.model = StudyMasterPlaner()
-        self.view = CalendarView(root, self)
+        self.view = StudyMasterPlannerView(root, self)
 
     def load_task(self):
+        pass 
 
     def add_task(self, name, deadline):
         self.model.create_entry(name, deadline)
@@ -17,3 +18,4 @@ class AppController:
         self.view.update_list()
 
     def edit_task(self, name):
+        pass 
