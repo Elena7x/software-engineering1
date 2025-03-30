@@ -43,6 +43,21 @@ class StudyMasterPlannerView:
         
     def show_list_view(self):
         ListView(self.root, self.controller)
+        
+    def update_list(self, view):
+        if view == "calendar":
+            # Kalender schließen, wenn offen
+            for window in self.root.winfo_children():
+                if isinstance(window, tk.Toplevel) and window.title() == "Kalender":
+                    window.destroy()
+            CalendarView(self.root, self.controller)
+
+        elif view == "list":
+            # ListView schließen, wenn offen
+            for window in self.root.winfo_children():
+                if isinstance(window, tk.Toplevel) and window.title() == "Alle Aufgaben":
+                    window.destroy()
+            ListView(self.root, self.controller)
 
 class Task:
     def __init__(self, parent):
@@ -226,15 +241,11 @@ class DayTaskList:
         def save_changes():
             new_name = entry_title.get()
             new_deadline = entry_deadline.get()
-            self.controller.model.edit_entries(task.name, new_name, new_deadline)
-            self.controller.model.save_to_json()
+            self.controller.edit_task(task.name, new_name, new_deadline,  view="calendar")
 
             win.destroy()
             self.top.destroy()
-            self.calendar_view.top.destroy()  # <--- altes Kalenderfenster schließen
-
-            # neues Kalenderfenster öffnen
-            CalendarView(self.controller.view.root, self.controller)
+            self.calendar_view.top.destroy()
 
         tk.Button(win, text="Speichern", command=save_changes).pack(pady=10)
 
@@ -293,9 +304,7 @@ class ListView:
         def save_changes():
             new_name = entry_title.get()
             new_deadline = entry_deadline.get()
-            self.controller.model.edit_entries(task.name, new_name, new_deadline)
-            self.controller.model.save_to_json()
-            self.draw_list()
+            self.controller.edit_task(task.name, new_name, new_deadline, view="list")
             win.destroy()
 
         tk.Button(win, text="Speichern", command=save_changes).pack(pady=10)
