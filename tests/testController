@@ -1,0 +1,81 @@
+import unittest
+from unittest.mock import MagicMock
+import sys
+import os
+
+# Projektpfad hinzufügen, damit controller.py importiert werden kann
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from controller import AppController
+
+class TestAppController(unittest.TestCase):
+
+    def setUp(self):
+        self.fake_root = MagicMock()
+        self.controller = AppController(self.fake_root)
+        self.controller.view = MagicMock()
+        self.controller.model = MagicMock()
+
+    def test_add_task_default_view(self):
+        self.controller.add_task("Aufgabe 1", "2025-12-01")
+        self.controller.model.create_entry.assert_called_once_with("Aufgabe 1", "2025-12-01")
+        self.controller.view.update_list.assert_called_once_with("list")
+
+    def test_add_task_calendar_view(self):
+        self.controller.add_task("Kalender-Aufgabe", "2025-12-01", view="calendar")
+        self.controller.view.update_list.assert_called_once_with("calendar")
+
+    def test_remove_task_default_view(self):
+        self.controller.remove_task("Aufgabe 1")
+        self.controller.model.delete_entry.assert_called_once_with("Aufgabe 1")
+        self.controller.view.update_list.assert_called_once_with("list")
+
+    def test_remove_task_calendar_view(self):
+        self.controller.remove_task("Kalender-Aufgabe", view="calendar")
+        self.controller.view.update_list.assert_called_once_with("calendar")
+
+    def test_edit_task_success_default_view(self):
+        self.controller.model.edit_entries.return_value = True
+        result = self.controller.edit_task("Alt", "Neu", "2025-12-31")
+        self.assertTrue(result)
+        self.controller.model.edit_entries.assert_called_once_with("Alt", "Neu", "2025-12-31")
+        self.controller.model.save_to_json.assert_called_once()
+        self.controller.view.update_list.assert_called_once_with("list")
+
+    def test_edit_task_success_calendar_view(self):
+        self.controller.model.edit_entries.return_value = True
+        result = self.controller.edit_task("Alt", "Neu", "2025-12-31", view="calendar")
+        self.assertTrue(result)
+        self.controller.view.update_list.assert_called_once_with("calendar")
+
+    def test_edit_task_failure(self):
+        self.controller.model.edit_entries.return_value = False
+        result = self.controller.edit_task("Nicht vorhanden", "Neu")
+        self.assertFalse(result)
+        self.controller.model.save_to_json.assert_not_called()
+        self.controller.view.update_list.assert_not_called()
+
+    def test_load_task_found(self):
+        task_mock = MagicMock()
+        task_mock.name = "Test"
+        task_mock.deadline = "2025-12-31"
+        task_mock.priority = 3
+        task_mock.category = "DHBW"
+        self.controller.model.load_entry.return_value = task_mock
+
+        result = self.controller.load_task("Test")
+        expected = {
+            "name": "Test",
+            "deadline": "2025-12-31",
+            "priority": 3,
+            "category": "DHBW"
+        }
+        self.assertEqual(result, expected)
+
+    def test_load_task_not_found(self):
+        self.controller.model.load_entry.return_value = None
+        result = self.controller.load_task("Unbekannt")
+        self.assertIsNone(result)
+
+if __name__ == "__main__":
+    unittest.main()
