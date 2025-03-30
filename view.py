@@ -148,7 +148,7 @@ class CalendarView:
                             anchor="n",
                             justify="left",
                             wraplength=80,
-                            command=lambda t=tasks[0]: self.open_task_window(t)  # erste Aufgabe anzeigen
+                            command=lambda d=date_str, t=tasks: self.open_day_task_list(d, t)
                         )
                         btn.grid(row=row, column=col)
                     else:
@@ -159,31 +159,8 @@ class CalendarView:
             return [task for task in self.controller.model.tasks if task.deadline == date_str]
         return []
     
-    def open_task_window(self, task):
-        win = tk.Toplevel(self.top)
-        win.title("Aufgabe bearbeiten")
-        win.geometry("400x250")
-
-        tk.Label(win, text="Titel:").pack(pady=5)
-        entry_title = tk.Entry(win, width=40)
-        entry_title.insert(0, task.name)
-        entry_title.pack(pady=5)
-
-        tk.Label(win, text="Deadline (YYYY-MM-DD):").pack(pady=5)
-        entry_deadline = tk.Entry(win, width=40)
-        entry_deadline.insert(0, task.deadline)
-        entry_deadline.pack(pady=5)
-
-        def save_changes():
-            new_name = entry_title.get()
-            new_deadline = entry_deadline.get()
-            self.controller.model.edit_entries(task.name, new_name, new_deadline)
-            self.draw_calendar()
-            win.destroy()
-
-        btn_save = tk.Button(win, text="Speichern", command=save_changes)
-        btn_save.pack(pady=10)
-
+    def open_day_task_list(self, date_str, tasks):
+        DayTaskList(self.top, date_str, tasks, self.controller, self)
 
     def prev_month(self):
         if self.month == 1:
@@ -204,6 +181,61 @@ class CalendarView:
     def go_back(self):
         self.parent.deiconify()
         self.top.destroy()
+        
+class DayTaskList:
+    def __init__(self, parent, date_str, tasks, controller, calendar_view):
+        self.controller = controller
+        self.calendar_view = calendar_view  # <--- Das ist neu!
+
+        self.top = tk.Toplevel(parent)
+        self.top.title(f"Aufgaben am {date_str}")
+        self.top.geometry("400x300")
+
+        tk.Label(self.top, text=f"Aufgaben für {date_str}:", font=("Arial", 12, "bold")).pack(pady=10)
+
+        for task in tasks:
+            frame = tk.Frame(self.top)
+            frame.pack(fill=tk.X, padx=10, pady=5)
+
+            lbl = tk.Label(frame, text=task.name, anchor="w")
+            lbl.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+            btn = tk.Button(frame, text="Bearbeiten", command=lambda t=task: self.open_edit_window(t))
+            btn.pack(side=tk.RIGHT)
+
+        tk.Button(self.top, text="Schließen", command=self.top.destroy).pack(pady=10)
+    
+    
+    def open_edit_window(self, task):
+        win = tk.Toplevel(self.top)
+        win.title("Aufgabe bearbeiten")
+        win.geometry("400x250")
+
+        tk.Label(win, text="Titel:").pack(pady=5)
+        entry_title = tk.Entry(win, width=40)
+        entry_title.insert(0, task.name)
+        entry_title.pack(pady=5)
+
+        tk.Label(win, text="Deadline (YYYY-MM-DD):").pack(pady=5)
+        entry_deadline = tk.Entry(win, width=40)
+        entry_deadline.insert(0, task.deadline)
+        entry_deadline.pack(pady=5)
+
+        def save_changes():
+            new_name = entry_title.get()
+            new_deadline = entry_deadline.get()
+            self.controller.model.edit_entries(task.name, new_name, new_deadline)
+            self.controller.model.save_to_json()
+
+            win.destroy()
+            self.top.destroy()
+            self.calendar_view.top.destroy()  # <--- altes Kalenderfenster schließen
+
+            # neues Kalenderfenster öffnen
+            CalendarView(self.controller.view.root, self.controller)
+
+        tk.Button(win, text="Speichern", command=save_changes).pack(pady=10)
+
 
 ''' def create_task_input_section(self, parent_frame):
         self.task_input_frame = tk.Frame(parent_frame, bd=2, relief=tk.SUNKEN, padx=10, pady=10)

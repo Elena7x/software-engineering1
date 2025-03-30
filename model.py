@@ -78,4 +78,19 @@ class StudyMasterPlaner:
                         self.tasks.append(Task(name, deadline))
         except Exception as e:
             print(f"[Fehler beim Laden]: {e}")
+            
+    def save_to_json(self, filename="tasks.json"):
+        data = {}
+        for task in self.tasks:
+            data[task.name] = {
+                "name": task.name,
+                "deadline": task.deadline,
+                "priority": 1,
+                "category": "Unbekannt",
+                "text": "",
+                "reminder": None
+            }
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+
 

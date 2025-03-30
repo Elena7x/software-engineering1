@@ -1,9 +1,17 @@
 {
-    "Lernen": {
-        "name": "Lernen mit sehr vielen sachen und noch mehr bla bla bla bla ",
+    "Lernen b1": {
+        "name": "Lernen b1",
         "deadline": "2025-03-22",
-        "priority": 4,
-        "category": "DHBW",
+        "priority": 1,
+        "category": "Unbekannt",
+        "text": "",
+        "reminder": null
+    },
+    "Lernen2": {
+        "name": "Lernen2",
+        "deadline": "2025-03-22",
+        "priority": 1,
+        "category": "Unbekannt",
         "text": "",
         "reminder": null
     }
