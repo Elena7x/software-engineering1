@@ -1,14 +1,14 @@
 {
-    "Lernen b3": {
-        "name": "Lernen b3",
+    "Lernen b2": {
+        "name": "Lernen b2",
         "deadline": "2025-03-22",
         "priority": 1,
         "category": "Unbekannt",
         "text": "",
         "reminder": null
-    },
-    "Lernen2": {
-        "name": "Lernen2",
+    }, 
+    "Lernen": {
+        "name": "Lernen b2",
         "deadline": "2025-03-22",
         "priority": 1,
         "category": "Unbekannt",

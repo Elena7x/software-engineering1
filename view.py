@@ -217,8 +217,13 @@ class DayTaskList:
             lbl = tk.Label(frame, text=task.name, anchor="w")
             lbl.pack(side=tk.LEFT, fill=tk.X, expand=True)
 
-            btn = tk.Button(frame, text="Bearbeiten", command=lambda t=task: self.open_edit_window(t))
-            btn.pack(side=tk.RIGHT)
+            # Mülleimer-Button 
+            btn_delete = tk.Button(frame, text="🗑", width=2, command=lambda t=task: self.delete_task(t))
+            btn_delete.pack(side=tk.RIGHT)
+
+            # Bearbeiten-Button
+            btn_edit = tk.Button(frame, text="Bearbeiten", command=lambda t=task: self.open_edit_window(t))
+            btn_edit.pack(side=tk.RIGHT, padx=(5, 2))
 
         tk.Button(self.top, text="Schließen", command=self.top.destroy).pack(pady=10)
     
@@ -248,6 +253,11 @@ class DayTaskList:
             self.calendar_view.top.destroy()
 
         tk.Button(win, text="Speichern", command=save_changes).pack(pady=10)
+
+    def delete_task(self, task):
+        self.controller.remove_task(task.name, view="calendar")
+        self.top.destroy()
+        self.calendar_view.top.destroy()
 
 class ListView:
     def __init__(self, parent, controller):
@@ -283,8 +293,13 @@ class ListView:
 
             tk.Label(frame, text=lbl_text, anchor="w").pack(side=tk.LEFT, padx=5, pady=5)
 
+            # 🗑 Mülleimer-Button
+            btn_delete = tk.Button(frame, text="🗑", width=2, command=lambda t=task: self.delete_task(t))
+            btn_delete.pack(side=tk.RIGHT)
+
+            # 🖊 Bearbeiten-Button
             btn_edit = tk.Button(frame, text="Bearbeiten", command=lambda t=task: self.open_edit_window(t))
-            btn_edit.pack(side=tk.RIGHT, padx=5)
+            btn_edit.pack(side=tk.RIGHT, padx=(5, 2))
 
     def open_edit_window(self, task):
         win = tk.Toplevel(self.top)
@@ -308,7 +323,9 @@ class ListView:
             win.destroy()
 
         tk.Button(win, text="Speichern", command=save_changes).pack(pady=10)
-
+    
+    def delete_task(self, task):
+        self.controller.remove_task(task.name, view="list")
 
 ''' def create_task_input_section(self, parent_frame):
         self.task_input_frame = tk.Frame(parent_frame, bd=2, relief=tk.SUNKEN, padx=10, pady=10)
