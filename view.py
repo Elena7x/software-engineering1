@@ -35,7 +35,7 @@ class StudyMasterPlannerView:
     def show_task_input(self):
         """ Öffnet die Eingabemaske für eine neue Aufgabe """
         self.root.withdraw()  # Hauptfenster verstecken
-        Task(self.root)  # Erstellt das Fenster
+        Task(self.root, self.controller)  # Erstellt das Fenster
 
     def show_calendar(self):
         self.root.withdraw()  # Hauptfenster verstecken
@@ -60,7 +60,8 @@ class StudyMasterPlannerView:
             ListView(self.root, self.controller)
 
 class Task:
-    def __init__(self, parent):
+    def __init__(self, parent, controller):
+        self.controller = controller
         """ Erstellt eine Eingabemaske für neue Aufgaben """
         self.top = tk.Toplevel(parent)  # Neues Fenster Eingabemaske
         self.top.title("Neue Aufgabe hinzufügen")
@@ -95,7 +96,7 @@ class Task:
         button_frame = tk.Frame(self.top)
         button_frame.pack(pady=10)
 
-        btn_save = tk.Button(button_frame, text="Speichern")
+        btn_save = tk.Button(button_frame, text="Speichern", command=self.save_task)
         btn_save.pack(side=tk.LEFT, padx=10)
 
         # Event für das rote X (WM_DELETE_WINDOW) registrieren
@@ -108,6 +109,18 @@ class Task:
         """ Zeigt das Hauptfenster wieder an und schließt die Eingabemaske """
         self.parent.deiconify()  # Hauptfenster wieder sichtbar machen
         self.top.destroy()  # Eingabemaske schließen
+
+    def save_task(self):
+        task_data = {
+            "name": self.name_entry.get(),
+            "deadline": self.deadline_entry.get(),
+            "priority": self.priority_entry.get(),
+            "category": self.category_entry.get(),
+            "description": self.description_entry.get(),
+            "reminder": self.reminder_entry.get()
+        }
+        self.controller.add_task(task_data)  # direkt Controller informieren
+        self.go_back()
 
 class CalendarView:
     def __init__(self, parent, controller=None):
