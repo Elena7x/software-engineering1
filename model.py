@@ -1,16 +1,22 @@
 import json
+
+from scripts.regsetup import description
+
+
 class Task:
     """
     eine einzelne Aufgabe 
     """
-    def __init__(self, name, deadline, priority=1, category="Unbekannt"):
+    def __init__(self, name, deadline, priority, category, description, reminder):
         self.name = name
         self.deadline = deadline
         self.priority = priority
         self.category = category
+        self.description = description
+        self.reminder = reminder
 
     def __str__(self):
-        return f"Task(name='{self.name}', deadline='{self.deadline}', priority={self.priority}, category='{self.category}')"
+        return f"Task(name='{self.name}', deadline='{self.deadline}', priority={self.priority}, category='{self.category}, description={self.description}, reminder={self.reminder})')"
 
 
 class StudyMasterPlaner:
@@ -22,12 +28,14 @@ class StudyMasterPlaner:
         self.tasks = []
         self.load_from_json("tasks.json")  # automatisch laden
 
-    def create_entry(self, name, deadline):
+    def create_entry(self, name, deadline, priority, category, description, reminder):
         """
         Erstellt eine neue Task und fügt ihn der Liste hinzu.
         """
-        new_task = Task(name, deadline)
+        new_task = Task(name, deadline, priority, category, description, reminder)
         self.tasks.append(new_task)
+        with open("tasks.json", "w", encoding="utf-8") as f:
+            json.dump([task.__dict__ for task in self.tasks], f, ensure_ascii=False, indent=4)
         return new_task
 
     def delete_entry(self, name):
@@ -90,9 +98,9 @@ class StudyMasterPlaner:
             data[task.name] = {
                 "name": task.name,
                 "deadline": task.deadline,
-                "priority": 1,
-                "category": "Unbekannt",
-                "text": "",
+                "priority": task.priority,
+                "category": task.category,
+                "text": task.description,
                 "reminder": None
             }
         with open(filename, "w") as f:

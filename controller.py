@@ -1,5 +1,5 @@
 from model import StudyMasterPlaner
-from view import StudyMasterPlannerView
+from view import StudyMasterPlannerView, Task
 
 class AppController:
     def __init__(self, root):
@@ -17,8 +17,9 @@ class AppController:
             }
         return None
 
-    def add_task(self, name, deadline, view="list"):
-        self.model.create_entry(name, deadline)
+    def add_task(self, task_data, view="list"):
+        self.model.create_entry(**task_data)
+        self.model.save_to_json()
         self.view.update_list(view)
 
     def remove_task(self, name, view="list"):

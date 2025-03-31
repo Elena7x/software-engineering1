@@ -35,7 +35,7 @@ class StudyMasterPlannerView:
     def show_task_input(self):
         """ Öffnet die Eingabemaske für eine neue Aufgabe """
         self.root.withdraw()  # Hauptfenster verstecken
-        Task(self.root)  # Erstellt das Fenster
+        Task(self.root, self.controller)  # Erstellt das Fenster
 
     def show_calendar(self):
         self.root.withdraw()  # Hauptfenster verstecken
@@ -60,26 +60,43 @@ class StudyMasterPlannerView:
             ListView(self.root, self.controller)
 
 class Task:
-    def __init__(self, parent):
+    def __init__(self, parent, controller):
+        self.controller = controller
         """ Erstellt eine Eingabemaske für neue Aufgaben """
         self.top = tk.Toplevel(parent)  # Neues Fenster Eingabemaske
         self.top.title("Neue Aufgabe hinzufügen")
         self.parent = parent #Hauptfenster
         self.top.geometry("500x400")
-        # Label und Eingabefeld für Aufgabenname
-        tk.Label(self.top, text="Aufgabe:").pack(pady=5)
-        self.task_entry = tk.Entry(self.top, width=40)
-        self.task_entry.pack(pady=5)
+        # Label und Eingabefeld
+        tk.Label(self.top, text="Name").pack(pady=5)    #Eingabe Aufgabenname
+        self.name_entry = tk.Entry(self.top, width=40)
+        self.name_entry.pack(pady=5)
 
-        tk.Label(self.top, text="Tag:").pack(pady=5)
-        self.tag_entry = tk.Entry(self.top, width=40)
-        self.tag_entry.pack(pady=5)
+        tk.Label(self.top, text="Deadline").pack(pady=5)    #Eingabe Deadline
+        self.deadline_entry = tk.Entry(self.top, width=40)
+        self.deadline_entry.pack(pady=5)
+
+        tk.Label(self.top, text="Priorität").pack(pady=5)    #Eingabe Priorität
+        self.priority_entry = tk.Entry(self.top, width=40)
+        self.priority_entry.pack(pady=5)
+
+        tk.Label(self.top, text="Kategorie").pack(pady=5)  # Eingabe Kategorie
+        self.category_entry = tk.Entry(self.top, width=40)
+        self.category_entry.pack(pady=5)
+
+        tk.Label(self.top, text="Beschreibung").pack(pady=5)  # Eingabe Beschreibung
+        self.description_entry = tk.Entry(self.top, width=40)
+        self.description_entry.pack(pady=5)
+
+        tk.Label(self.top, text="Erinnerung").pack(pady=5)  # Eingabe Erinnerung
+        self.reminder_entry = tk.Entry(self.top, width=40)
+        self.reminder_entry.pack(pady=5)
 
         # Buttons für Speichern und Abbrechen
         button_frame = tk.Frame(self.top)
         button_frame.pack(pady=10)
 
-        btn_save = tk.Button(button_frame, text="Speichern")
+        btn_save = tk.Button(button_frame, text="Speichern", command=self.save_task)
         btn_save.pack(side=tk.LEFT, padx=10)
 
         # Event für das rote X (WM_DELETE_WINDOW) registrieren
@@ -92,6 +109,18 @@ class Task:
         """ Zeigt das Hauptfenster wieder an und schließt die Eingabemaske """
         self.parent.deiconify()  # Hauptfenster wieder sichtbar machen
         self.top.destroy()  # Eingabemaske schließen
+
+    def save_task(self):
+        task_data = {
+            "name": self.name_entry.get(),
+            "deadline": self.deadline_entry.get(),
+            "priority": self.priority_entry.get(),
+            "category": self.category_entry.get(),
+            "description": self.description_entry.get(),
+            "reminder": self.reminder_entry.get()
+        }
+        self.controller.add_task(task_data)  # direkt Controller informieren
+        self.go_back()
 
 class CalendarView:
     def __init__(self, parent, controller=None):
