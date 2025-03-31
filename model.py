@@ -50,7 +50,7 @@ class StudyMasterPlaner:
                 return True
         return False
 
-    def edit_entries(self, old_name, new_name=None, new_deadline=None):
+    def edit_entries(self, old_name, new_name=None, new_deadline=None, new_priority=None, new_category=None, new_description=None, new_reminder=None):
         """
         Bearbeitet einen bestehenden Task. Sucht anhand des alten Namens.
         Optional können neuer Name und/oder neues Fälligkeitsdatum
@@ -63,6 +63,14 @@ class StudyMasterPlaner:
                     task.name = new_name
                 if new_deadline:
                     task.deadline = new_deadline
+                if new_priority:
+                    task.priority = new_priority
+                if new_category:
+                    task.category = new_category
+                if new_description:
+                    task.description = new_description
+                if new_reminder:
+                    task.reminder = new_reminder
                 return True
         return False
 

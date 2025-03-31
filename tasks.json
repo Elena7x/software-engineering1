@@ -1,13 +1,5 @@
 [
     {
-        "name": "test",
-        "deadline": "test",
-        "priority": "test",
-        "category": "test",
-        "description": "test",
-        "reminder": "test"
-    },
-    {
         "name": "12",
         "deadline": "12",
         "priority": "12",
