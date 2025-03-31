@@ -66,14 +66,30 @@ class Task:
         self.top.title("Neue Aufgabe hinzufügen")
         self.parent = parent #Hauptfenster
         self.top.geometry("500x400")
-        # Label und Eingabefeld für Aufgabenname
-        tk.Label(self.top, text="Aufgabe:").pack(pady=5)
-        self.task_entry = tk.Entry(self.top, width=40)
-        self.task_entry.pack(pady=5)
+        # Label und Eingabefeld
+        tk.Label(self.top, text="Name").pack(pady=5)    #Eingabe Aufgabenname
+        self.name_entry = tk.Entry(self.top, width=40)
+        self.name_entry.pack(pady=5)
 
-        tk.Label(self.top, text="Tag:").pack(pady=5)
-        self.tag_entry = tk.Entry(self.top, width=40)
-        self.tag_entry.pack(pady=5)
+        tk.Label(self.top, text="Deadline").pack(pady=5)    #Eingabe Deadline
+        self.deadline_entry = tk.Entry(self.top, width=40)
+        self.deadline_entry.pack(pady=5)
+
+        tk.Label(self.top, text="Priorität").pack(pady=5)    #Eingabe Priorität
+        self.priority_entry = tk.Entry(self.top, width=40)
+        self.priority_entry.pack(pady=5)
+
+        tk.Label(self.top, text="Kategorie").pack(pady=5)  # Eingabe Kategorie
+        self.category_entry = tk.Entry(self.top, width=40)
+        self.category_entry.pack(pady=5)
+
+        tk.Label(self.top, text="Beschreibung").pack(pady=5)  # Eingabe Beschreibung
+        self.description_entry = tk.Entry(self.top, width=40)
+        self.description_entry.pack(pady=5)
+
+        tk.Label(self.top, text="Erinnerung").pack(pady=5)  # Eingabe Erinnerung
+        self.reminder_entry = tk.Entry(self.top, width=40)
+        self.reminder_entry.pack(pady=5)
 
         # Buttons für Speichern und Abbrechen
         button_frame = tk.Frame(self.top)
