@@ -1,13 +1,16 @@
+import json
 class Task:
     """
     eine einzelne Aufgabe 
     """
-    def __init__(self, name, deadline):
+    def __init__(self, name, deadline, priority=1, category="Unbekannt"):
         self.name = name
         self.deadline = deadline
+        self.priority = priority
+        self.category = category
 
     def __str__(self):
-        return f"Task(name='{self.name}', deadline='{self.deadline}')"
+        return f"Task(name='{self.name}', deadline='{self.deadline}', priority={self.priority}, category='{self.category}')"
 
 
 class StudyMasterPlaner:
@@ -17,6 +20,7 @@ class StudyMasterPlaner:
     def __init__(self):
         # Liste aller Tasks
         self.tasks = []
+        self.load_from_json("tasks.json")  # automatisch laden
 
     def create_entry(self, name, deadline):
         """
@@ -64,4 +68,36 @@ class StudyMasterPlaner:
             if task.name == name:
                 return task
         return None
+    
+    def load_from_json(self, filename):
+        try:
+            with open(filename, "r") as f:
+                data = json.load(f)
+                for task_data in data.values():
+                    name = task_data.get("name")
+                    deadline = task_data.get("deadline")
+                    priority = task_data.get("priority", 1)
+                    category = task_data.get("category", "Unbekannt")
+
+                    if name and deadline:
+                        self.tasks.append(Task(name, deadline, priority, category))
+        except Exception as e:
+            print(f"[Fehler beim Laden]: {e}")
+            
+    def save_to_json(self, filename="tasks.json"):
+        data = {}
+        for task in self.tasks:
+            data[task.name] = {
+                "name": task.name,
+                "deadline": task.deadline,
+                "priority": 1,
+                "category": "Unbekannt",
+                "text": "",
+                "reminder": None
+            }
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+            
+    
+
 

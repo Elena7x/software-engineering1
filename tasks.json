@@ -1,9 +1,17 @@
 {
+    "Lernen b2": {
+        "name": "Lernen b2",
+        "deadline": "2025-03-22",
+        "priority": 1,
+        "category": "Unbekannt",
+        "text": "",
+        "reminder": null
+    }, 
     "Lernen": {
-        "name": "Lernen",
-        "deadline": "2025-01-22",
-        "priority": 4,
-        "category": "DHBW",
+        "name": "Lernen b2",
+        "deadline": "2025-03-22",
+        "priority": 1,
+        "category": "Unbekannt",
         "text": "",
         "reminder": null
     }
