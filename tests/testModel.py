@@ -16,5 +16,14 @@ class TestStudyMasterPlaner(unittest.TestCase):
         self.assertEqual(len(self.planer.tasks), 1)
         self.assertEqual(self.planer.tasks[0].name, "Aufgabe 1")
 
+    def test_no_name(self):
+        res = self.planer.create_entry(
+        "",                  # name leer
+        "","", "", "", ""       # rest darf leer sein
+    )
+        self.assertIsInstance(res, dict)
+        self.assertEqual(res.get("status"), "error")
+        self.assertEqual(res.get("message"), "Ungültige Eingabe: Name fehlt")
+
 if __name__ == '__main__':
     unittest.main()

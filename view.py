@@ -109,7 +109,7 @@ class Task:
         # Event für das rote X (WM_DELETE_WINDOW) registrieren
         self.top.protocol("WM_DELETE_WINDOW", self.go_back)
 
-        btn_go_back = tk.Button(button_frame, text="Go Back", command=self.go_back)
+        btn_go_back = tk.Button(button_frame, text="Zurück", command=self.go_back)
         btn_go_back.pack(side=tk.RIGHT, padx=10)
 
     def go_back(self):
