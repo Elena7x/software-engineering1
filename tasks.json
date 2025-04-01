@@ -1,10 +1,18 @@
-{
-    "1": {
-        "name": "1",
-        "deadline": "1",
-        "priority": "1",
-        "category": "1",
-        "text": "1",
-        "reminder": null
+[
+    {
+        "name": "12",
+        "deadline": "12",
+        "priority": "12",
+        "category": "12",
+        "description": "12",
+        "reminder": "12"
+    },
+    {
+        "name": "13",
+        "deadline": "13",
+        "priority": "13",
+        "category": "13",
+        "description": "13",
+        "reminder": "13"
     }
-}
+]

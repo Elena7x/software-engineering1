@@ -9,7 +9,7 @@ class StudyMasterPlannerView:
         self.controller = controller
         self.root = root
         self.root.title("Study Master Planner")
-        self.root.geometry("500x400")
+        self.root.geometry("800x600")
 
         # Hauptlayout-Frames
         self.main_frame = tk.Frame(self.root)
@@ -66,7 +66,7 @@ class Task:
         self.top = tk.Toplevel(parent)  # Neues Fenster Eingabemaske
         self.top.title("Neue Aufgabe hinzufügen")
         self.parent = parent #Hauptfenster
-        self.top.geometry("500x400")
+        self.top.geometry("600x600")
         # Label und Eingabefeld
         tk.Label(self.top, text="Name").pack(pady=5)    #Eingabe Aufgabenname
         self.name_entry = tk.Entry(self.top, width=40)
@@ -128,7 +128,7 @@ class CalendarView:
         self.top = tk.Toplevel(parent)
         self.top.title("Kalender")
         self.parent = parent
-        self.top.geometry("600x500")
+        self.top.geometry("600x600")
 
         self.today = datetime.today()
         self.year = self.today.year
@@ -235,7 +235,7 @@ class DayTaskList:
 
         self.top = tk.Toplevel(parent)
         self.top.title(f"Aufgaben am {date_str}")
-        self.top.geometry("400x300")
+        self.top.geometry("600x600")
 
         tk.Label(self.top, text=f"Aufgaben für {date_str}:", font=("Arial", 12, "bold")).pack(pady=10)
 

@@ -36,7 +36,7 @@ class StudyMasterPlaner:
         self.tasks.append(new_task)
         with open("tasks.json", "w", encoding="utf-8") as f:
             json.dump([task.__dict__ for task in self.tasks], f, ensure_ascii=False, indent=4)
-        return new_task
+
 
     def delete_entry(self, name):
         """
@@ -50,7 +50,7 @@ class StudyMasterPlaner:
                 return True
         return False
 
-    def edit_entries(self, old_name, new_name=None, new_deadline=None):
+    def edit_entries(self, old_name, new_name=None, new_deadline=None, new_priority=None, new_category=None, new_description=None, new_reminder=None):
         """
         Bearbeitet einen bestehenden Task. Sucht anhand des alten Namens.
         Optional können neuer Name und/oder neues Fälligkeitsdatum
@@ -63,6 +63,14 @@ class StudyMasterPlaner:
                     task.name = new_name
                 if new_deadline:
                     task.deadline = new_deadline
+                if new_priority:
+                    task.priority = new_priority
+                if new_category:
+                    task.category = new_category
+                if new_description:
+                    task.description = new_description
+                if new_reminder:
+                    task.reminder = new_reminder
                 return True
         return False
 
@@ -76,35 +84,27 @@ class StudyMasterPlaner:
             if task.name == name:
                 return task
         return None
-    
+
     def load_from_json(self, filename):
         try:
-            with open(filename, "r") as f:
+            with open(filename, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                for task_data in data.values():
+                for task_data in data:
                     name = task_data.get("name")
                     deadline = task_data.get("deadline")
-                    priority = task_data.get("priority", 1)
-                    category = task_data.get("category", "Unbekannt")
+                    priority = task_data.get("priority")
+                    category = task_data.get("category")
+                    description = task_data.get("description")
+                    reminder = task_data.get("reminder")
 
                     if name and deadline:
-                        self.tasks.append(Task(name, deadline, priority, category))
+                        self.tasks.append(Task(name, deadline, priority, category, description, reminder))
         except Exception as e:
             print(f"[Fehler beim Laden]: {e}")
-            
+
     def save_to_json(self, filename="tasks.json"):
-        data = {}
-        for task in self.tasks:
-            data[task.name] = {
-                "name": task.name,
-                "deadline": task.deadline,
-                "priority": task.priority,
-                "category": task.category,
-                "text": task.description,
-                "reminder": None
-            }
-        with open(filename, "w") as f:
-            json.dump(data, f, indent=4)
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump([task.__dict__ for task in self.tasks], f, ensure_ascii=False, indent=4)
             
     
 
