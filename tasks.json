@@ -1,18 +1,26 @@
 [
     {
-        "name": "12",
-        "deadline": "12",
-        "priority": "12",
-        "category": "12",
-        "description": "12",
-        "reminder": "12"
+        "name": "Aufgabe",
+        "deadline": "2025-04-04",
+        "priority": "2",
+        "category": "Uni",
+        "description": "test",
+        "reminder": ""
     },
     {
-        "name": "13",
-        "deadline": "13",
-        "priority": "13",
-        "category": "13",
-        "description": "13",
-        "reminder": "13"
+        "name": "Test",
+        "deadline": "2025-04-04",
+        "priority": "1",
+        "category": "test",
+        "description": "",
+        "reminder": ""
+    },
+    {
+        "name": "Test",
+        "deadline": "2025-01-04",
+        "priority": "2",
+        "category": "test",
+        "description": "",
+        "reminder": ""
     }
 ]

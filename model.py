@@ -32,10 +32,13 @@ class StudyMasterPlaner:
         """
         Erstellt eine neue Task und fügt ihn der Liste hinzu.
         """
+        if not name:
+            return {"status": "error", "message": "Ungültige Eingabe: Name fehlt"}
         new_task = Task(name, deadline, priority, category, description, reminder)
         self.tasks.append(new_task)
         with open("tasks.json", "w", encoding="utf-8") as f:
             json.dump([task.__dict__ for task in self.tasks], f, ensure_ascii=False, indent=4)
+        return {"status": "info", "message": "Aufgabe erfolgreich angelegt"}
 
 
     def delete_entry(self, name):

@@ -18,9 +18,10 @@ class AppController:
         return None
 
     def add_task(self, task_data, view="list"):
-        self.model.create_entry(**task_data)
+        res = self.model.create_entry(**task_data)
         self.model.save_to_json()
         self.view.update_list(view)
+        self.view.show_alert(res["status"], res["message"])
 
     def remove_task(self, name, view="list"):
         self.model.delete_entry(name)
