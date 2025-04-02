@@ -1,26 +1,18 @@
 [
     {
-        "name": "Aufgabe",
-        "deadline": "2025-04-04",
-        "priority": "2",
+        "name": "Aufgabe 1",
+        "deadline": "2025-04-05",
+        "priority": "hoch",
         "category": "Uni",
-        "description": "test",
-        "reminder": ""
+        "description": "Klausur lernen",
+        "reminder": "2025-04-04"
     },
     {
-        "name": "Test",
-        "deadline": "2025-01-04",
-        "priority": "2",
-        "category": "test",
-        "description": "",
-        "reminder": ""
-    },
-    {
-        "name": "task",
-        "deadline": "a",
-        "priority": "a",
-        "category": "a",
-        "description": "a",
-        "reminder": "a"
+        "name": "1",
+        "deadline": "1",
+        "priority": "1",
+        "category": "1",
+        "description": "1",
+        "reminder": "1"
     }
 ]
