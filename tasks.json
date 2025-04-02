@@ -6,13 +6,5 @@
         "category": "Uni",
         "description": "Klausur lernen",
         "reminder": "2025-04-04"
-    },
-    {
-        "name": "1",
-        "deadline": "1",
-        "priority": "1",
-        "category": "1",
-        "description": "1",
-        "reminder": "1"
     }
 ]

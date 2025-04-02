@@ -13,7 +13,7 @@ class TestStudyMasterPlaner(unittest.TestCase):
         self.planer.tasks = []
 
     def test_create_entry(self):
-        self.planer.create_entry("Aufgabe 1", "2025-03-20")
+        self.planer.create_entry("Aufgabe 1", "2025-03-20", "", "", "", "")
         self.assertEqual(len(self.planer.tasks), 1)
         self.assertEqual(self.planer.tasks[0].name, "Aufgabe 1")
 
