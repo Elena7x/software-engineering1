@@ -340,7 +340,7 @@ class ListView:
     def open_edit_window(self, task):
         win = tk.Toplevel(self.top)
         win.title("Aufgabe bearbeiten")
-        win.geometry("400x250")
+        win.geometry("400x400")
 
         tk.Label(win, text="Titel:").pack(pady=5)
         entry_title = tk.Entry(win, width=40)
