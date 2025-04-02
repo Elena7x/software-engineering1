@@ -35,7 +35,7 @@ class StudyMasterPlannerView:
     def show_task_input(self):
         """ Öffnet die Eingabemaske für eine neue Aufgabe """
         self.root.withdraw()  # Hauptfenster verstecken
-        Task(self.root, self.controller)  # Erstellt das Fenster
+        TaskView(self.root, self.controller)  # Erstellt das Fenster
 
     def show_calendar(self):
         self.root.withdraw()  # Hauptfenster verstecken
@@ -66,7 +66,7 @@ class StudyMasterPlannerView:
             messagebox.showinfo("Info", message)
 
 
-class Task:
+class TaskView:
     def __init__(self, parent, controller):
         self.controller = controller
         """ Erstellt eine Eingabemaske für neue Aufgaben """
@@ -352,10 +352,34 @@ class ListView:
         entry_deadline.insert(0, task.deadline)
         entry_deadline.pack(pady=5)
 
+        tk.Label(win, text="Priorität:").pack(pady=5)
+        entry_priority = tk.Entry(win, width=40)
+        entry_priority.insert(0, task.name)
+        entry_priority.pack(pady=5)
+
+        tk.Label(win, text="Kategorie:").pack(pady=5)
+        entry_category = tk.Entry(win, width=40)
+        entry_category.insert(0, task.name)
+        entry_category.pack(pady=5)
+
+        tk.Label(win, text="Beschreibung:").pack(pady=5)
+        entry_description = tk.Entry(win, width=40)
+        entry_description.insert(0, task.name)
+        entry_description.pack(pady=5)
+
+        tk.Label(win, text="Erinnerung:").pack(pady=5)
+        entry_reminder = tk.Entry(win, width=40)
+        entry_reminder.insert(0, task.name)
+        entry_reminder.pack(pady=5)
+
         def save_changes():
             new_name = entry_title.get()
             new_deadline = entry_deadline.get()
-            self.controller.edit_task(task.name, new_name, new_deadline, view="list")
+            new_priority = entry_priority.get()
+            new_category = entry_category.get()
+            new_description = entry_description.get()
+            new_reminder = entry_reminder.get()
+            self.controller.edit_task(task.name, new_name, new_deadline, new_priority, new_category, new_description, new_reminder, view="list")
             win.destroy()
 
         tk.Button(win, text="Speichern", command=save_changes).pack(pady=10)

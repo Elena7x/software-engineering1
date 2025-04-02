@@ -1,5 +1,5 @@
 from model import StudyMasterPlaner
-from view import StudyMasterPlannerView, Task
+from view import StudyMasterPlannerView
 
 class AppController:
     def __init__(self, root):
@@ -29,8 +29,8 @@ class AppController:
         self.view.update_list(view)
 
 
-    def edit_task(self, old_name, new_name=None, new_deadline=None, view="list"):
-        success = self.model.edit_entries(old_name, new_name, new_deadline)
+    def edit_task(self, old_name, new_name=None, new_deadline=None, new_priority=None, new_category=None, new_description=None, new_reminder=None, view="list"):
+        success = self.model.edit_entries(old_name, new_name, new_deadline, new_priority, new_category, new_description, new_reminder)
         if success:
             self.model.save_to_json()
             self.view.update_list(view)
