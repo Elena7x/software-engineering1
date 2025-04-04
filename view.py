@@ -79,7 +79,7 @@ class TaskView:
         self.name_entry = tk.Entry(self.top, width=40)
         self.name_entry.pack(pady=5)
 
-        tk.Label(self.top, text="Deadline").pack(pady=5)    #Eingabe Deadline
+        tk.Label(self.top, text="Deadline (YYYY-MM-DD)").pack(pady=5)    #Eingabe Deadline
         self.deadline_entry = tk.Entry(self.top, width=40)
         self.deadline_entry.pack(pady=5)
 
